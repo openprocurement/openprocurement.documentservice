@@ -1,7 +1,4 @@
-from zope.interface import (
-    Attribute,
-    Interface,
-    )
+from zope.interface import Interface
 
 
 class IStorage(Interface):

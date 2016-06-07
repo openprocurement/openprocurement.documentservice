@@ -2,9 +2,6 @@
 import unittest
 import webtest
 import os
-from copy import deepcopy
-from datetime import datetime, timedelta
-from uuid import uuid4
 
 
 class BaseWebTest(unittest.TestCase):

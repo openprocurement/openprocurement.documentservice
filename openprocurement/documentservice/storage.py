@@ -1,3 +1,4 @@
+from email.header import decode_header
 from hashlib import md5
 from openprocurement.documentservice.interfaces import IStorage
 from rfc6266 import build_header
@@ -71,5 +72,4 @@ class MemoryStorage:
 
 
 def includeme(config):
-    settings = config.registry.settings
     config.registry.storage = MemoryStorage()

@@ -1,8 +1,5 @@
 from pyramid.view import view_config
-from binascii import hexlify
 from base64 import b64encode, b64decode
-from pyelliptic import ECC
-from uuid import uuid4
 from time import time
 from urllib import quote, unquote
 from openprocurement.documentservice.storage import StorageRedirect, MD5Invalid, KeyNotFound
@@ -41,7 +38,7 @@ def upload_view(request):
         request.response.status = 404
         return {
             "status": "error",
-            "errors": [{ "location": "url", "name": "doc_id", "description": "Not Found"}]
+            "errors": [{"location": "url", "name": "doc_id", "description": "Not Found"}]
         }
     except MD5Invalid:
         request.response.status = 403
