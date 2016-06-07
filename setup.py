@@ -11,6 +11,7 @@ version = '1.0'
 requires = [
     'chaussette',
     'gevent',
+    'pyelliptic',
     'pyramid',
     'pyramid_exclog',
     'pytz',
