@@ -15,6 +15,7 @@ requires = [
     'pyramid',
     'pyramid_exclog',
     'pytz',
+    'rfc6266',
     'setuptools',
 ]
 test_requires = requires + [
