@@ -18,11 +18,12 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.include('pyramid_exclog')
     config.add_route('register', '/register')
-    config.add_route('upload', '/upload/{doc_id}')
+    config.add_route('upload', '/upload')
+    config.add_route('upload_file', '/upload/{doc_id}')
     config.add_route('get', '/get/{doc_id}')
     config.scan(ignore='openprocurement.documentservice.tests')
 
-    curve = settings.get('curve')
+    curve = settings.get('curve', 'secp384r1')
     privkey = b64decode(settings.get('privkey')) if 'privkey' in settings else None
     pubkey = b64decode(settings.get('pubkey')) if 'pubkey' in settings else None
     apikeys = settings.get('apikeys') if 'apikeys' in settings else b64encode(ECC(curve=curve).get_pubkey())

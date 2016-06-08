@@ -50,20 +50,25 @@ class MemoryStorage:
         }
         return uuid
 
-    def upload(self, uuid, post_file):
+    def upload(self, post_file, uuid=None):
         filename = get_filename(post_file.filename)
         content_type = post_file.type
         in_file = post_file.file
-        if uuid not in self.storage:
+        if uuid is not None and uuid not in self.storage:
             raise KeyNotFound(uuid)
-        key = self.storage[uuid]
-        md5hash = key.get('md5')
+        if uuid is None:
+            uuid = uuid4().hex
+            key = self.storage[uuid] = {}
+        else:
+            key = self.storage[uuid]
         content = in_file.read()
-        if md5(content).hexdigest() != md5hash:
+        md5hash = key.get('md5')
+        if md5hash and md5(content).hexdigest() != md5hash:
             raise MD5Invalid(md5hash)
         key['Content-Type'] = content_type
         key["Content-Disposition"] = build_header(filename, filename_compat=quote(filename.encode('utf-8')))
         key['content'] = content
+        return uuid
 
     def get(self, uuid):
         if uuid not in self.storage:

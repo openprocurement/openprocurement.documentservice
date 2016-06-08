@@ -16,7 +16,7 @@ def register_view(request):
             "errors": [{"location": "body", "name": "filename or md5", "description": "Not Found"}]
         }
     uuid = request.registry.storage.register(request.POST['filename'], request.POST['md5'])
-    url = request.route_url('upload', doc_id=uuid)
+    url = request.route_url('upload_file', doc_id=uuid)
     request.response.status = 201
     request.response.headers['Location'] = url
     return url
@@ -30,10 +30,26 @@ def upload_view(request):
             "status": "error",
             "errors": [{"location": "body", "name": "file", "description": "Not Found"}]
         }
+    post_file = request.POST['file']
+    uuid = request.registry.storage.upload(post_file)
+    expires = int(time()) + EXPIRES
+    mess = "{}\0{}".format(uuid, expires)
+    signature = quote(b64encode(request.registry.keyring['doc'].sign(mess)))
+    return request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': 'doc'})
+
+
+@view_config(route_name='upload_file', renderer='json', request_method='POST')
+def upload_file_view(request):
+    if 'file' not in request.POST or not hasattr(request.POST['file'], 'filename'):
+        request.response.status = 404
+        return {
+            "status": "error",
+            "errors": [{"location": "body", "name": "file", "description": "Not Found"}]
+        }
     uuid = request.matchdict['doc_id']
     post_file = request.POST['file']
     try:
-        request.registry.storage.upload(uuid, post_file)
+        request.registry.storage.upload(post_file, uuid)
     except KeyNotFound:
         request.response.status = 404
         return {
