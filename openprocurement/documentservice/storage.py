@@ -41,12 +41,11 @@ class MemoryStorage:
     def __init__(self):
         pass
 
-    def register(self, filename, md5hash):
+    def register(self, md5hash):
         uuid = uuid4().hex
         self.storage[uuid] = {
             'md5': md5hash,
-            "Content-Disposition": build_header(filename, filename_compat=quote(filename.encode('utf-8'))),
-            'content': md5hash,
+            'Content': md5hash,
         }
         return uuid
 
@@ -62,13 +61,15 @@ class MemoryStorage:
         else:
             key = self.storage[uuid]
         content = in_file.read()
-        md5hash = key.get('md5')
-        if md5hash and md5(content).hexdigest() != md5hash:
-            raise MD5Invalid(md5hash)
+        key_md5 = key.get('md5')
+        md5hash = md5(content).hexdigest()
+        if key_md5 and md5(content).hexdigest() != key_md5:
+            raise MD5Invalid(key_md5)
+        key['md5'] = md5hash
         key['Content-Type'] = content_type
         key["Content-Disposition"] = build_header(filename, filename_compat=quote(filename.encode('utf-8')))
-        key['content'] = content
-        return uuid
+        key['Content'] = content
+        return uuid, md5hash
 
     def get(self, uuid):
         if uuid not in self.storage:

@@ -34,30 +34,22 @@ class SimpleTest(BaseWebTest):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['status'], 'error')
         self.assertEqual(response.json['errors'], [
-            {u'description': u'Not Found', u'location': u'body', u'name': u'filename or md5'}
+            {u'description': u'Not Found', u'location': u'body', u'name': u'md5'}
         ])
 
-        response = self.app.post(url, {'md5': 'hash'}, status=404)
+        response = self.app.post(url, {'not_md5': 'hash'}, status=404)
         self.assertEqual(response.status, '404 Not Found')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['status'], 'error')
         self.assertEqual(response.json['errors'], [
-            {u'description': u'Not Found', u'location': u'body', u'name': u'filename or md5'}
-        ])
-
-        response = self.app.post(url, {'filename': 'file.txt'}, status=404)
-        self.assertEqual(response.status, '404 Not Found')
-        self.assertEqual(response.content_type, 'application/json')
-        self.assertEqual(response.json['status'], 'error')
-        self.assertEqual(response.json['errors'], [
-            {u'description': u'Not Found', u'location': u'body', u'name': u'filename or md5'}
+            {u'description': u'Not Found', u'location': u'body', u'name': u'md5'}
         ])
 
     def test_register_post(self):
         response = self.app.post('/register', {'md5': 'hash', 'filename': 'file.txt'})
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
-        self.assertIn('http://localhost/upload/', response.json)
+        self.assertIn('http://localhost/upload/', response.json['upload_url'])
 
     def test_upload_invalid(self):
         url = '/upload'
@@ -73,7 +65,7 @@ class SimpleTest(BaseWebTest):
         response = self.app.post('/upload', upload_files=[('file', u'file.txt', 'content')])
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
-        self.assertIn('http://localhost/get/', response.json)
+        self.assertIn('http://localhost/get/', response.json['get_url'])
 
     def test_upload_file_invalid(self):
         url = '/upload/uuid'
@@ -97,9 +89,9 @@ class SimpleTest(BaseWebTest):
         response = self.app.post('/register', {'md5': 'hash', 'filename': 'file.txt'})
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
-        self.assertIn('http://localhost/upload/', response.json)
+        self.assertIn('http://localhost/upload/', response.json['upload_url'])
 
-        response = self.app.post(response.json, upload_files=[('file', u'file.doc', 'content')], status=403)
+        response = self.app.post(response.json['upload_url'], upload_files=[('file', u'file.doc', 'content')], status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['status'], 'error')
@@ -113,12 +105,12 @@ class SimpleTest(BaseWebTest):
         response = self.app.post('/register', {'md5': md5hash, 'filename': 'file.txt'})
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
-        self.assertIn('http://localhost/upload/', response.json)
+        self.assertIn('http://localhost/upload/', response.json['upload_url'])
 
-        response = self.app.post(response.json, upload_files=[('file', u'file.txt', 'content')])
+        response = self.app.post(response.json['upload_url'], upload_files=[('file', u'file.txt', 'content')])
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
-        self.assertIn('http://localhost/get/', response.json)
+        self.assertIn('http://localhost/get/', response.json['get_url'])
 
     def test_get_invalid(self):
         response = self.app.get('/get/uuid', status=403)
@@ -166,14 +158,14 @@ class SimpleTest(BaseWebTest):
         response = self.app.post('/register', {'md5': md5hash, 'filename': 'file.txt'})
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
-        self.assertIn('http://localhost/upload/', response.json)
+        self.assertIn('http://localhost/upload/', response.json['upload_url'])
 
-        response = self.app.post(response.json, upload_files=[('file', u'file.txt', 'content')])
+        response = self.app.post(response.json['upload_url'], upload_files=[('file', u'file.txt', 'content')])
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
-        self.assertIn('http://localhost/get/', response.json)
+        self.assertIn('http://localhost/get/', response.json['get_url'])
 
-        response = self.app.get(response.json)
+        response = self.app.get(response.json['get_url'])
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'text/plain')
         self.assertEqual(response.body, 'content')
@@ -182,9 +174,9 @@ class SimpleTest(BaseWebTest):
         response = self.app.post('/upload', upload_files=[('file', u'file.txt', 'content')])
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
-        self.assertIn('http://localhost/get/', response.json)
+        self.assertIn('http://localhost/get/', response.json['get_url'])
 
-        response = self.app.get(response.json)
+        response = self.app.get(response.json['get_url'])
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'text/plain')
         self.assertEqual(response.body, 'content')
