@@ -18,7 +18,8 @@ def register_view(request):
     md5 = request.POST['md5']
     uuid = request.registry.storage.register(md5)
     upload_url = request.route_url('upload_file', doc_id=uuid)
-    url = request.route_url('get', doc_id=uuid)
+    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign("{}\0{}".format(uuid, md5))))
+    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
     request.response.status = 201
     request.response.headers['Location'] = upload_url
     return {'data': {'url': url, 'md5': md5}, 'upload_url': upload_url}
@@ -33,14 +34,15 @@ def upload_view(request):
             "errors": [{"location": "body", "name": "file", "description": "Not Found"}]
         }
     post_file = request.POST['file']
-    uuid, md5 = request.registry.storage.upload(post_file)
+    uuid, md5, content_type, filename = request.registry.storage.upload(post_file)
     expires = int(time()) + EXPIRES
     mess = "{}\0{}".format(uuid, expires)
-    signature = quote(b64encode(request.registry.keyring['doc'].sign(mess)))
-    url = request.route_url('get', doc_id=uuid)
-    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': 'doc'})
+    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign("{}\0{}".format(uuid, md5))))
+    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
+    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign(mess)))
+    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey})
     request.response.headers['Location'] = get_url
-    return {'data': {'url': url, 'md5': md5}, 'get_url': get_url}
+    return {'data': {'url': url, 'md5': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
 
 @view_config(route_name='upload_file', renderer='json', request_method='POST')
@@ -54,7 +56,7 @@ def upload_file_view(request):
     uuid = request.matchdict['doc_id']
     post_file = request.POST['file']
     try:
-        uuid, md5 = request.registry.storage.upload(post_file, uuid)
+        uuid, md5, content_type, filename = request.registry.storage.upload(post_file, uuid)
     except KeyNotFound:
         request.response.status = 404
         return {
@@ -69,10 +71,11 @@ def upload_file_view(request):
         }
     expires = int(time()) + EXPIRES
     mess = "{}\0{}".format(uuid, expires)
-    signature = quote(b64encode(request.registry.keyring['doc'].sign(mess)))
-    url = request.route_url('get', doc_id=uuid)
-    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': 'doc'})
-    return {'data': {'url': url, 'md5': md5}, 'get_url': get_url}
+    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign("{}\0{}".format(uuid, md5))))
+    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
+    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign(mess)))
+    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey})
+    return {'data': {'url': url, 'md5': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
 
 @view_config(route_name='get', renderer='json', request_method='GET')
@@ -86,7 +89,7 @@ def get_view(request):
             "status": "error",
             "errors": [{"location": "url", "name": "Expires", "description": "Request has expired"}]
         }
-    keyid = request.GET.get('KeyID', 'doc')
+    keyid = request.GET.get('KeyID', request.registry.dockey)
     if keyid != request.registry.apikey and not expires:
         request.response.status = 403
         return {
@@ -111,7 +114,15 @@ def get_view(request):
             "errors": [{"location": "url", "name": "Signature", "description": "Not Found"}]
         }
     signature = request.GET['Signature']
-    if not key.verify(b64decode(unquote(signature)), mess):
+    try:
+        signature = b64decode(unquote(signature))
+    except TypeError:
+        request.response.status = 403
+        return {
+            "status": "error",
+            "errors": [{"location": "url", "name": "Signature", "description": "Signature invalid"}]
+        }
+    if not key.verify(signature, mess):
         request.response.status = 403
         return {
             "status": "error",

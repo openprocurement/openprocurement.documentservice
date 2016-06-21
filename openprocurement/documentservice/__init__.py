@@ -27,7 +27,9 @@ def main(global_config, **settings):
     privkey = b64decode(settings.get('privkey')) if 'privkey' in settings else None
     pubkey = b64decode(settings.get('pubkey')) if 'pubkey' in settings else None
     apikeys = settings.get('apikeys') if 'apikeys' in settings else b64encode(ECC(curve=curve).get_pubkey())
-    keyring = {'doc': ECC(pubkey=pubkey, privkey=privkey, curve=curve)}
+    dockey = ECC(pubkey=pubkey, privkey=privkey, curve=curve)
+    config.registry.dockey = dockey.get_pubkey().encode('hex')[2:10]
+    keyring = {config.registry.dockey: dockey}
     for key in apikeys.split('\0'):
         decoded_key = b64decode(key)
         keyring[decoded_key.encode('hex')[2:10]] = ECC(pubkey=decoded_key, curve=curve)

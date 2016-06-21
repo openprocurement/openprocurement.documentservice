@@ -69,7 +69,7 @@ class MemoryStorage:
         key['Content-Type'] = content_type
         key["Content-Disposition"] = build_header(filename, filename_compat=quote(filename.encode('utf-8')))
         key['Content'] = content
-        return uuid, md5hash
+        return uuid, md5hash, content_type, filename
 
     def get(self, uuid):
         if uuid not in self.storage:
