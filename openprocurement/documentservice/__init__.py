@@ -30,6 +30,7 @@ class Root(object):
 
     __acl__ = [
         (Allow, 'g:uploaders', 'upload'),
+        (Allow, 'g:api', 'upload'),
         ]
 
 
