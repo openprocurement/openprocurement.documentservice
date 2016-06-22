@@ -1,10 +1,8 @@
 from email.header import decode_header
 from hashlib import md5
-from openprocurement.documentservice.interfaces import IStorage
 from rfc6266 import build_header
 from urllib import quote
 from uuid import uuid4
-from zope.interface import implementer
 
 
 def get_filename(filename):
@@ -34,7 +32,6 @@ class StorageRedirect(Exception):
         self.url = url
 
 
-@implementer(IStorage)
 class MemoryStorage:
     storage = {}
 

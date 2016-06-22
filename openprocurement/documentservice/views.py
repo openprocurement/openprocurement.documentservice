@@ -7,7 +7,7 @@ from openprocurement.documentservice.storage import StorageRedirect, MD5Invalid,
 EXPIRES = 300
 
 
-@view_config(route_name='register', renderer='json', request_method='POST')
+@view_config(route_name='register', renderer='json', request_method='POST', permission='upload')
 def register_view(request):
     if 'md5' not in request.POST:
         request.response.status = 404
@@ -25,7 +25,7 @@ def register_view(request):
     return {'data': {'url': url, 'md5': md5}, 'upload_url': upload_url}
 
 
-@view_config(route_name='upload', renderer='json', request_method='POST')
+@view_config(route_name='upload', renderer='json', request_method='POST', permission='upload')
 def upload_view(request):
     if 'file' not in request.POST or not hasattr(request.POST['file'], 'filename'):
         request.response.status = 404
@@ -45,7 +45,7 @@ def upload_view(request):
     return {'data': {'url': url, 'md5': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
 
-@view_config(route_name='upload_file', renderer='json', request_method='POST')
+@view_config(route_name='upload_file', renderer='json', request_method='POST', permission='upload')
 def upload_file_view(request):
     if 'file' not in request.POST or not hasattr(request.POST['file'], 'filename'):
         request.response.status = 404

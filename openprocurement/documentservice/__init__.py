@@ -4,18 +4,61 @@ import os
 from logging import getLogger
 from pkg_resources import iter_entry_points
 from pyramid.config import Configurator
+from pyramid.authentication import BasicAuthAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 from pytz import timezone
 from pyelliptic import ECC
 from base64 import b64encode, b64decode
+from ConfigParser import ConfigParser
+from hashlib import sha512
+
 
 LOGGER = getLogger(__name__)
 TZ = timezone(os.environ['TZ'] if 'TZ' in os.environ else 'Europe/Kiev')
+USERS = {}
+
+
+def auth_check(username, password, request):
+    if username in USERS and USERS[username]['password'] == sha512(password).hexdigest():
+        return ['g:{}'.format(USERS[username]['group'])]
+
+
+from pyramid.security import Allow
+class Root(object):
+    def __init__(self, request):
+        pass
+
+    __acl__ = [
+        (Allow, 'g:uploaders', 'upload'),
+        ]
+
+
+def read_users(filename):
+    config = ConfigParser()
+    config.read(filename)
+    for i in config.sections():
+        USERS.update(dict([
+            (
+                j,
+                {
+                    'password': k,
+                    'group': i
+                }
+            )
+            for j, k in config.items(i)
+        ]))
 
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
-    config = Configurator(settings=settings)
+    read_users(settings['auth.file'])
+    config = Configurator(
+        settings=settings,
+        authentication_policy=BasicAuthAuthenticationPolicy(auth_check, __name__),
+        authorization_policy=ACLAuthorizationPolicy(),
+        root_factory=Root,
+    )
     config.include('pyramid_exclog')
     config.add_route('register', '/register')
     config.add_route('upload', '/upload')
