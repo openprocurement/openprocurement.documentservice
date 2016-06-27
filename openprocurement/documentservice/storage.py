@@ -27,6 +27,10 @@ class MD5Invalid(ValueError):
     pass
 
 
+class NoContent(ValueError):
+    pass
+
+
 class StorageRedirect(Exception):
     def __init__(self, url):
         self.url = url
@@ -42,7 +46,7 @@ class MemoryStorage:
         uuid = uuid4().hex
         self.storage[uuid] = {
             'md5': md5hash,
-            'Content': md5hash,
+            'Content': '',
         }
         return uuid
 
@@ -71,6 +75,8 @@ class MemoryStorage:
     def get(self, uuid):
         if uuid not in self.storage:
             raise KeyNotFound(uuid)
+        if not self.storage[uuid]['Content']:
+            raise NoContent(uuid)
         return self.storage[uuid]
 
 

@@ -2,7 +2,7 @@ from pyramid.view import view_config
 from base64 import b64encode, b64decode
 from time import time
 from urllib import quote, unquote
-from openprocurement.documentservice.storage import StorageRedirect, MD5Invalid, KeyNotFound
+from openprocurement.documentservice.storage import StorageRedirect, MD5Invalid, KeyNotFound, NoContent
 
 EXPIRES = 300
 
@@ -136,6 +136,10 @@ def get_view(request):
             "status": "error",
             "errors": [{"location": "url", "name": "doc_id", "description": "Not Found"}]
         }
+    except NoContent:
+        request.response.status = 204
+        request.response.content_type = ''
+        return
     except StorageRedirect as e:
         request.response.status = 302
         request.response.headers['Location'] = e.url
