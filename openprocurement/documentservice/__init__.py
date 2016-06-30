@@ -70,15 +70,20 @@ def main(global_config, **settings):
     curve = settings.get('curve', 'secp384r1')
     privkey = b64decode(settings.get('privkey')) if 'privkey' in settings else None
     pubkey = b64decode(settings.get('pubkey')) if 'pubkey' in settings else None
-    apikeys = settings.get('apikeys') if 'apikeys' in settings else b64encode(ECC(curve=curve).get_pubkey())
+    dockeys = settings.get('dockeys') if 'dockeys' in settings else b64encode(ECC(curve=curve).get_pubkey())
     dockey = ECC(pubkey=pubkey, privkey=privkey, curve=curve)
     config.registry.dockey = dockey.get_pubkey().encode('hex')[2:10]
-    keyring = {config.registry.dockey: dockey}
+    config.registry.dockeyring = dockeyring = {config.registry.dockey: dockey}
+    for key in dockeys.split('\0'):
+        decoded_key = b64decode(key)
+        dockeyring[decoded_key.encode('hex')[2:10]] = ECC(pubkey=decoded_key, curve=curve)
+    apikeys = settings.get('apikeys') if 'apikeys' in settings else b64encode(ECC(curve=curve).get_pubkey())
+    config.registry.dockey = dockey.get_pubkey().encode('hex')[2:10]
+    config.registry.keyring = keyring = {config.registry.dockey: dockey}
     for key in apikeys.split('\0'):
         decoded_key = b64decode(key)
         keyring[decoded_key.encode('hex')[2:10]] = ECC(pubkey=decoded_key, curve=curve)
     config.registry.apikey = decoded_key.encode('hex')[2:10]
-    config.registry.keyring = keyring
 
     # search for storage
     storage = settings.get('storage')

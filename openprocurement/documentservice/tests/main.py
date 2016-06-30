@@ -77,12 +77,28 @@ class SimpleTest(BaseWebTest):
             {u'description': u'Not Found', u'location': u'body', u'name': u'file'}
         ])
 
-        response = self.app.post(url, upload_files=[('file', u'file.doc', 'content')], status=404)
-        self.assertEqual(response.status, '404 Not Found')
+        response = self.app.post(url, upload_files=[('file', u'file.doc', 'content')], status=403)
+        self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['status'], 'error')
         self.assertEqual(response.json['errors'], [
-            {u'description': u'Not Found', u'location': u'url', u'name': u'doc_id'}
+            {u'description': u'Not Found', u'name': u'Signature', u'location': u'url'}
+        ])
+
+        response = self.app.post(url + '?KeyID=test', upload_files=[('file', u'file.doc', 'content')], status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.json['status'], 'error')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Key Id does not exist', u'name': u'KeyID', u'location': u'url'}
+        ])
+
+        response = self.app.post(url + '?Signature=', upload_files=[('file', u'file.doc', 'content')], status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.json['status'], 'error')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Signature does not match', u'name': u'Signature', u'location': u'url'}
         ])
 
     def test_upload_file_md5(self):
@@ -106,14 +122,31 @@ class SimpleTest(BaseWebTest):
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('http://localhost/upload/', response.json['upload_url'])
+        upload_url = response.json['upload_url']
 
-        response = self.app.post(response.json['upload_url'], upload_files=[('file', u'file.txt', 'content')])
+        response = self.app.post(upload_url, upload_files=[('file', u'file.txt', 'content')])
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('http://localhost/get/', response.json['get_url'])
 
+        response = self.app.post(upload_url.replace('?', 'a?'), upload_files=[('file', u'file.doc', 'content')], status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.json['status'], 'error')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Signature does not match', u'name': u'Signature', u'location': u'url'}
+        ])
+
     def test_get_invalid(self):
         response = self.app.get('/get/uuid', status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.json['status'], 'error')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Not Found', u'name': u'Signature', u'location': u'url'}
+        ])
+
+        response = self.app.get('/get/uuid?KeyID=test', status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['status'], 'error')

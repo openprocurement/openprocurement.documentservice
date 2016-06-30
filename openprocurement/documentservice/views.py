@@ -17,7 +17,8 @@ def register_view(request):
         }
     md5 = request.POST['md5']
     uuid = request.registry.storage.register(md5)
-    upload_url = request.route_url('upload_file', doc_id=uuid)
+    signature = quote(b64encode(request.registry.dockeyring[request.registry.dockey].sign(uuid)))
+    upload_url = request.route_url('upload_file', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
     signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign("{}\0{}".format(uuid, md5))))
     url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
     request.response.status = 201
@@ -54,6 +55,35 @@ def upload_file_view(request):
             "errors": [{"location": "body", "name": "file", "description": "Not Found"}]
         }
     uuid = request.matchdict['doc_id']
+    keyid = request.GET.get('KeyID', request.registry.dockey)
+    if keyid not in request.registry.dockeyring:
+        request.response.status = 403
+        return {
+            "status": "error",
+            "errors": [{"location": "url", "name": "KeyID", "description": "Key Id does not exist"}]
+        }
+    key = request.registry.dockeyring.get(keyid)
+    if 'Signature' not in request.GET:
+        request.response.status = 403
+        return {
+            "status": "error",
+            "errors": [{"location": "url", "name": "Signature", "description": "Not Found"}]
+        }
+    signature = request.GET['Signature']
+    try:
+        signature = b64decode(unquote(signature))
+    except TypeError:
+        request.response.status = 403
+        return {
+            "status": "error",
+            "errors": [{"location": "url", "name": "Signature", "description": "Signature invalid"}]
+        }
+    if not key.verify(signature, uuid):
+        request.response.status = 403
+        return {
+            "status": "error",
+            "errors": [{"location": "url", "name": "Signature", "description": "Signature does not match"}]
+        }
     post_file = request.POST['file']
     try:
         uuid, md5, content_type, filename = request.registry.storage.upload(post_file, uuid)
@@ -90,7 +120,7 @@ def get_view(request):
             "errors": [{"location": "url", "name": "Expires", "description": "Request has expired"}]
         }
     keyid = request.GET.get('KeyID', request.registry.dockey)
-    if keyid != request.registry.apikey and not expires:
+    if keyid not in (request.registry.apikey, request.registry.dockey) and not expires:
         request.response.status = 403
         return {
             "status": "error",
