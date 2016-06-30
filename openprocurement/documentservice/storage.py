@@ -31,6 +31,10 @@ class NoContent(ValueError):
     pass
 
 
+class ContentUploaded(ValueError):
+    pass
+
+
 class StorageRedirect(Exception):
     def __init__(self, url):
         self.url = url
@@ -54,13 +58,15 @@ class MemoryStorage:
         filename = get_filename(post_file.filename)
         content_type = post_file.type
         in_file = post_file.file
-        if uuid is not None and uuid not in self.storage:
-            raise KeyNotFound(uuid)
-        if uuid is None:
+        if uuid is not None:
+            if uuid not in self.storage:
+                raise KeyNotFound(uuid)
+            if self.storage[uuid]['Content']:
+                raise ContentUploaded(uuid)
+            key = self.storage[uuid]
+        else:
             uuid = uuid4().hex
             key = self.storage[uuid] = {}
-        else:
-            key = self.storage[uuid]
         content = in_file.read()
         key_md5 = key.get('md5')
         md5hash = md5(content).hexdigest()

@@ -129,6 +129,13 @@ class SimpleTest(BaseWebTest):
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('http://localhost/get/', response.json['get_url'])
 
+        response = self.app.post(upload_url, upload_files=[('file', u'file.txt', 'content')], status=403)
+        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Content already uploaded', u'name': u'doc_id', u'location': u'url'}
+        ])
+
         response = self.app.post(upload_url.replace('?', 'a?'), upload_files=[('file', u'file.doc', 'content')], status=403)
         self.assertEqual(response.status, '403 Forbidden')
         self.assertEqual(response.content_type, 'application/json')

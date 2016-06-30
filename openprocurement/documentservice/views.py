@@ -2,7 +2,7 @@ from pyramid.view import view_config
 from base64 import b64encode, b64decode
 from time import time
 from urllib import quote, unquote
-from openprocurement.documentservice.storage import StorageRedirect, MD5Invalid, KeyNotFound, NoContent
+from openprocurement.documentservice.storage import StorageRedirect, MD5Invalid, KeyNotFound, NoContent, ContentUploaded
 
 EXPIRES = 300
 
@@ -92,6 +92,12 @@ def upload_file_view(request):
         return {
             "status": "error",
             "errors": [{"location": "url", "name": "doc_id", "description": "Not Found"}]
+        }
+    except ContentUploaded:
+        request.response.status = 403
+        return {
+            "status": "error",
+            "errors": [{"location": "url", "name": "doc_id", "description": "Content already uploaded"}]
         }
     except MD5Invalid:
         request.response.status = 403
