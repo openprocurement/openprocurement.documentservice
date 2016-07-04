@@ -1,0 +1,20 @@
+POST /upload/0aa911d0639349d19bfdb4ddc162af50?KeyID=fa2a2dca&Signature=MGYCMQCekJ%252ByOjVmxOGzAO2PvA0I0oUHNOXHhFckwdyiIMLIf1TS2S%2F8Kc9SDIL6PlATen4CMQDbkEtxtj65pKvA25wZuvofNq20drWDWCqNrReltt7GGHar7NTbhrvV%2FGevJUI6nqU%253D HTTP/1.0
+Authorization: Basic YnJva2VyOmJyb2tlcg==
+Content-Length: 179
+Content-Type: multipart/form-data; boundary=----------a_BoUnDaRy266804977683$
+Host: docs.api-sandbox.openprocurement.org
+
+
+200 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+  "get_url": "http://docs.api-sandbox.openprocurement.org/get/0aa911d0639349d19bfdb4ddc162af50?Expires=1467631359&KeyID=fa2a2dca&Signature=MGQCMFELd5pT656G%2FrphkVBIgI4lJyyLqcZq8qQoxmr1a56Q2JazflmxL3LkNlQ7CfG9PwIwIdsSpJ9otndxsdEewl5PTEuDwm3ITU2m%2FApSCB6g90%2FM41L1dA9j3762OMFKuqWe", 
+  "data": {
+    "url": "http://docs.api-sandbox.openprocurement.org/get/0aa911d0639349d19bfdb4ddc162af50?KeyID=fa2a2dca&Signature=MGUCMQCmdubDLB6Q8wOaFHAp7zidI5sI8At6qhxl8qUafAe%252B%2FhRC3YBf44x93AWfB9p1LwQCMHbs5U5mYazFabpV%252BGTl3muZ8HybmiR2xZUNhFdK6VuAdd%2F2DWtvLJh88dYoFkrDXA%253D%253D", 
+    "format": "text/plain", 
+    "md5": "9a0364b9e99bb480dd25e1f0284c8555", 
+    "title": "file.txt"
+  }
+}
+

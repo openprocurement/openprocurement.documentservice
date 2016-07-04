@@ -1,0 +1,10 @@
+GET /get/0aa911d0639349d19bfdb4ddc162af50?Expires=1467631359&KeyID=fa2a2dca&Signature=MGQCMFELd5pT656G%2FrphkVBIgI4lJyyLqcZq8qQoxmr1a56Q2JazflmxL3LkNlQ7CfG9PwIwIdsSpJ9otndxsdEewl5PTEuDwm3ITU2m%2FApSCB6g90%2FM41L1dA9j3762OMFKuqWe HTTP/1.0
+Authorization: Basic YnJva2VyOmJyb2tlcg==
+Host: docs.api-sandbox.openprocurement.org
+
+
+200 OK
+Content-Disposition: attachment; filename=file.txt
+Content-Type: text/plain; charset=UTF-8
+
+
