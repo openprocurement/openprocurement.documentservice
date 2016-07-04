@@ -2,20 +2,20 @@ from pyramid.view import view_config
 from base64 import b64encode, b64decode
 from time import time
 from urllib import quote, unquote
-from openprocurement.documentservice.storage import StorageRedirect, MD5Invalid, KeyNotFound, NoContent, ContentUploaded
+from openprocurement.documentservice.storage import StorageRedirect, HashInvalid, KeyNotFound, NoContent, ContentUploaded
 
 EXPIRES = 300
 
 
 @view_config(route_name='register', renderer='json', request_method='POST', permission='upload')
 def register_view(request):
-    if 'md5' not in request.POST:
+    if 'hash' not in request.POST:
         request.response.status = 404
         return {
             "status": "error",
-            "errors": [{"location": "body", "name": "md5", "description": "Not Found"}]
+            "errors": [{"location": "body", "name": "hash", "description": "Not Found"}]
         }
-    md5 = request.POST['md5']
+    md5 = request.POST['hash']
     uuid = request.registry.storage.register(md5)
     signature = quote(b64encode(request.registry.dockeyring[request.registry.dockey].sign(uuid)))
     upload_url = request.route_url('upload_file', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
@@ -23,7 +23,7 @@ def register_view(request):
     url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
     request.response.status = 201
     request.response.headers['Location'] = upload_url
-    return {'data': {'url': url, 'md5': md5}, 'upload_url': upload_url}
+    return {'data': {'url': url, 'hash': md5}, 'upload_url': upload_url}
 
 
 @view_config(route_name='upload', renderer='json', request_method='POST', permission='upload')
@@ -43,7 +43,7 @@ def upload_view(request):
     signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign(mess)))
     get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey})
     request.response.headers['Location'] = get_url
-    return {'data': {'url': url, 'md5': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
+    return {'data': {'url': url, 'hash': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
 
 @view_config(route_name='upload_file', renderer='json', request_method='POST', permission='upload')
@@ -99,11 +99,11 @@ def upload_file_view(request):
             "status": "error",
             "errors": [{"location": "url", "name": "doc_id", "description": "Content already uploaded"}]
         }
-    except MD5Invalid:
+    except HashInvalid:
         request.response.status = 403
         return {
             "status": "error",
-            "errors": [{"location": "body", "name": "file", "description": "Invalid MD5 checksum"}]
+            "errors": [{"location": "body", "name": "file", "description": "Invalid checksum"}]
         }
     expires = int(time()) + EXPIRES
     mess = "{}\0{}".format(uuid, expires)
@@ -111,7 +111,7 @@ def upload_file_view(request):
     url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
     signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign(mess)))
     get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey})
-    return {'data': {'url': url, 'md5': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
+    return {'data': {'url': url, 'hash': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
 
 @view_config(route_name='get', renderer='json', request_method='GET')

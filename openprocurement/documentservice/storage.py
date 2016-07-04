@@ -23,7 +23,7 @@ class KeyNotFound(KeyError):
     pass
 
 
-class MD5Invalid(ValueError):
+class HashInvalid(ValueError):
     pass
 
 
@@ -49,7 +49,7 @@ class MemoryStorage:
     def register(self, md5hash):
         uuid = uuid4().hex
         self.storage[uuid] = {
-            'md5': md5hash,
+            'hash': md5hash,
             'Content': '',
         }
         return uuid
@@ -68,11 +68,11 @@ class MemoryStorage:
             uuid = uuid4().hex
             key = self.storage[uuid] = {}
         content = in_file.read()
-        key_md5 = key.get('md5')
+        key_md5 = key.get('hash')
         md5hash = md5(content).hexdigest()
         if key_md5 and md5(content).hexdigest() != key_md5:
-            raise MD5Invalid(key_md5)
-        key['md5'] = md5hash
+            raise HashInvalid(key_md5)
+        key['hash'] = md5hash
         key['Content-Type'] = content_type
         key["Content-Disposition"] = build_header(filename, filename_compat=quote(filename.encode('utf-8')))
         key['Content'] = content

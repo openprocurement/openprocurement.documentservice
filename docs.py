@@ -18,15 +18,13 @@ class DumpsTestAppwebtest(TestApp):
         req.headers.environ["HTTP_HOST"] = "docs.api-sandbox.openprocurement.org"
         if hasattr(self, 'file_obj') and not self.file_obj.closed:
             self.file_obj.write(req.as_bytes(True))
-            self.file_obj.write("\n")
+            self.file_obj.write("\n\n")
             if req.body:
                 try:
-                    self.file_obj.write(
-                        '\n' + json.dumps(json.loads(req.body), indent=2, ensure_ascii=False).encode('utf8'))
-                    self.file_obj.write("\n")
+                    self.file_obj.write(json.dumps(json.loads(req.body), indent=2, ensure_ascii=False).encode('utf8'))
                 except:
-                    pass
-            self.file_obj.write("\n")
+                    self.file_obj.write(req.body.encode('utf8'))
+                self.file_obj.write("\n\n")
         resp = super(DumpsTestAppwebtest, self).do_request(req, status=status, expect_errors=expect_errors)
         if hasattr(self, 'file_obj') and not self.file_obj.closed:
             headers = [(n.title(), v)
@@ -57,7 +55,7 @@ class TenderResourceTest(BaseWebTest):
     def test_docs(self):
         with open('docs/source/tutorial/register.http', 'w') as self.app.file_obj:
             md5hash = md5('content').hexdigest()
-            response = self.app.post('/register', {'md5': md5hash, 'filename': 'file.txt'})
+            response = self.app.post('/register', {'hash': md5hash, 'filename': 'file.txt'})
             self.assertEqual(response.status, '201 Created')
             self.assertEqual(response.content_type, 'application/json')
             self.assertIn('http://docs.api-sandbox.openprocurement.org/upload/', response.json['upload_url'])

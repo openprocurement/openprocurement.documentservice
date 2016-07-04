@@ -1,19 +1,21 @@
 POST /register HTTP/1.0
 Authorization: Basic YnJva2VyOmJyb2tlcg==
-Content-Length: 54
+Content-Length: 55
 Content-Type: application/x-www-form-urlencoded
 Host: docs.api-sandbox.openprocurement.org
+
+hash=9a0364b9e99bb480dd25e1f0284c8555&filename=file.txt
 
 
 201 Created
 Content-Type: application/json; charset=UTF-8
-Location: http://docs.api-sandbox.openprocurement.org/upload/0aa911d0639349d19bfdb4ddc162af50?KeyID=fa2a2dca&Signature=MGYCMQCekJ%252ByOjVmxOGzAO2PvA0I0oUHNOXHhFckwdyiIMLIf1TS2S%2F8Kc9SDIL6PlATen4CMQDbkEtxtj65pKvA25wZuvofNq20drWDWCqNrReltt7GGHar7NTbhrvV%2FGevJUI6nqU%253D
+Location: http://docs.api-sandbox.openprocurement.org/upload/5c521a51a3dc417e9c718fd4e6a85157?KeyID=ad1c8f4f&Signature=MGUCMGoyv%252BXNkAoYbPChhPZ6MnBJK3ggQJURglrm70ozbwi1D4kLgvkdy8pOWeyU2W7OiAIxALh4s0oX0XuVlvGbBBPEgNhZs8vo1nm1e6Iog%252B7S5cfFAM7jdx1Eam6dV2GbDUN1cQ%253D%253D
 
 {
-  "upload_url": "http://docs.api-sandbox.openprocurement.org/upload/0aa911d0639349d19bfdb4ddc162af50?KeyID=fa2a2dca&Signature=MGYCMQCekJ%252ByOjVmxOGzAO2PvA0I0oUHNOXHhFckwdyiIMLIf1TS2S%2F8Kc9SDIL6PlATen4CMQDbkEtxtj65pKvA25wZuvofNq20drWDWCqNrReltt7GGHar7NTbhrvV%2FGevJUI6nqU%253D", 
+  "upload_url": "http://docs.api-sandbox.openprocurement.org/upload/5c521a51a3dc417e9c718fd4e6a85157?KeyID=ad1c8f4f&Signature=MGUCMGoyv%252BXNkAoYbPChhPZ6MnBJK3ggQJURglrm70ozbwi1D4kLgvkdy8pOWeyU2W7OiAIxALh4s0oX0XuVlvGbBBPEgNhZs8vo1nm1e6Iog%252B7S5cfFAM7jdx1Eam6dV2GbDUN1cQ%253D%253D", 
   "data": {
-    "url": "http://docs.api-sandbox.openprocurement.org/get/0aa911d0639349d19bfdb4ddc162af50?KeyID=fa2a2dca&Signature=MGQCMHwm4oUjDOO%252BRqvmS9Fe%2FawfuewLQKlsUW7R5GmEkrbO1%252BhTME14sv%2FLr67hnHE8LgIwb33TfxdjAmqiJ3kt70Dg%2Fkrt6WMY4JBzo0%252B4pRE8BCSgqLHoirGOMq7GImRSDa%2Fg", 
-    "md5": "9a0364b9e99bb480dd25e1f0284c8555"
+    "url": "http://docs.api-sandbox.openprocurement.org/get/5c521a51a3dc417e9c718fd4e6a85157?KeyID=ad1c8f4f&Signature=MGYCMQDFt2N1hVQzSS2TZPTy7%252BdmRwb5PMxVMof2VcMk4UiO9wbPEQWF%2FYURusMGQSVgLRoCMQD2SuipLsTlEUozUvYcuqrX9Siss6knlvllRwZNuWAIKzTJcSEL3oPjzG%2FUdJumSOo%253D", 
+    "hash": "9a0364b9e99bb480dd25e1f0284c8555"
   }
 }
 

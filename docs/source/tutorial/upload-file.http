@@ -1,20 +1,28 @@
 POST /upload HTTP/1.0
 Authorization: Basic YnJva2VyOmJyb2tlcg==
-Content-Length: 173
-Content-Type: multipart/form-data; boundary=----------a_BoUnDaRy902553822$
+Content-Length: 179
+Content-Type: multipart/form-data; boundary=----------a_BoUnDaRy510302448724$
 Host: docs.api-sandbox.openprocurement.org
+
+------------a_BoUnDaRy510302448724$
+Content-Disposition: form-data; name="file"; filename="file.txt"
+Content-Type: text/plain
+
+content
+------------a_BoUnDaRy510302448724$--
+
 
 
 200 OK
 Content-Type: application/json; charset=UTF-8
-Location: http://docs.api-sandbox.openprocurement.org/get/68bebefc92f949269501ddd9ef9e0b37?Expires=1467631359&KeyID=fa2a2dca&Signature=MGQCMGWCHGEdJCyVoHecQWUhhNaD54f9%2F9YhNdyzUkcKrQbwDtxkaHuFe91H5qtNqtomnwIwHs90h3qq2VRCipoljZK7bh8HJHgu%2FRmkSCxwJFNKgJPHdrI291j2cTRA4qqRADqk
+Location: http://docs.api-sandbox.openprocurement.org/get/1d8f71249398428792506f12c6071f24?Expires=1467637367&KeyID=ad1c8f4f&Signature=MGUCMQCcwML4hKp8CDJyzkDU%2F0LBxoNdgMqOusm6LdXH33hjpT73RmXvLSqMsOg%2F%2FHde2bYCMFMquxwj4imqKlG0FpnX7vuzn5xKgOydvGdaae6rna3jEfRAg%2Fg876vDF%252BfBMXTQGg%253D%253D
 
 {
-  "get_url": "http://docs.api-sandbox.openprocurement.org/get/68bebefc92f949269501ddd9ef9e0b37?Expires=1467631359&KeyID=fa2a2dca&Signature=MGQCMGWCHGEdJCyVoHecQWUhhNaD54f9%2F9YhNdyzUkcKrQbwDtxkaHuFe91H5qtNqtomnwIwHs90h3qq2VRCipoljZK7bh8HJHgu%2FRmkSCxwJFNKgJPHdrI291j2cTRA4qqRADqk", 
+  "get_url": "http://docs.api-sandbox.openprocurement.org/get/1d8f71249398428792506f12c6071f24?Expires=1467637367&KeyID=ad1c8f4f&Signature=MGUCMQCcwML4hKp8CDJyzkDU%2F0LBxoNdgMqOusm6LdXH33hjpT73RmXvLSqMsOg%2F%2FHde2bYCMFMquxwj4imqKlG0FpnX7vuzn5xKgOydvGdaae6rna3jEfRAg%2Fg876vDF%252BfBMXTQGg%253D%253D", 
   "data": {
-    "url": "http://docs.api-sandbox.openprocurement.org/get/68bebefc92f949269501ddd9ef9e0b37?KeyID=fa2a2dca&Signature=MGQCMDCvVM4uau%252Bz3JPTXra4RDIjAhzcUHo1ccjpVpxAVpJQJcUKpusxK5IHmLjN3GB%2FVQIwJwyeogaf3yuc893OowtV4b%2FFKknoLzXsZ82vV5SeNON%2FItPYy6rVX1MDIfZ40P4U", 
+    "url": "http://docs.api-sandbox.openprocurement.org/get/1d8f71249398428792506f12c6071f24?KeyID=ad1c8f4f&Signature=MGUCMQCfllpotQXrT%2FRyVKFCSWwiAdebP2VNSu%2F6qxFYeaSjYHUWZ0XdFXshuKwFZA1xjwoCMDVFPQ42ILxenhJWUR8xz1THjwCEQvJJvccpvHipCW3IBR9RKPtafF6yXD4DVRKajw%253D%253D", 
     "format": "text/plain", 
-    "md5": "9a0364b9e99bb480dd25e1f0284c8555", 
+    "hash": "9a0364b9e99bb480dd25e1f0284c8555", 
     "title": "file.txt"
   }
 }
