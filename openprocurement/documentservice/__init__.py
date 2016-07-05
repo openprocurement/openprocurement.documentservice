@@ -1,17 +1,17 @@
 import gevent.monkey
 gevent.monkey.patch_all()
 import os
+from ConfigParser import ConfigParser
+from base64 import b64encode, b64decode
+from hashlib import sha512
+from libnacl.sign import Signer, Verifier
 from logging import getLogger
 from pkg_resources import iter_entry_points
-from pyramid.config import Configurator
 from pyramid.authentication import BasicAuthAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+from pyramid.config import Configurator
+from pyramid.security import Allow
 from pytz import timezone
-from pyelliptic import ECC
-from base64 import b64encode, b64decode
-from ConfigParser import ConfigParser
-from hashlib import sha512
-
 
 LOGGER = getLogger(__name__)
 TZ = timezone(os.environ['TZ'] if 'TZ' in os.environ else 'Europe/Kiev')
@@ -23,7 +23,6 @@ def auth_check(username, password, request):
         return ['g:{}'.format(USERS[username]['group'])]
 
 
-from pyramid.security import Allow
 class Root(object):
     def __init__(self, request):
         pass
@@ -67,23 +66,18 @@ def main(global_config, **settings):
     config.add_route('get', '/get/{doc_id}')
     config.scan(ignore='openprocurement.documentservice.tests')
 
-    curve = settings.get('curve', 'secp384r1')
-    privkey = b64decode(settings.get('privkey')) if 'privkey' in settings else None
-    pubkey = b64decode(settings.get('pubkey')) if 'pubkey' in settings else None
-    dockeys = settings.get('dockeys') if 'dockeys' in settings else b64encode(ECC(curve=curve).get_pubkey())
-    dockey = ECC(pubkey=pubkey, privkey=privkey, curve=curve)
-    config.registry.dockey = dockey.get_pubkey().encode('hex')[2:10]
-    config.registry.dockeyring = dockeyring = {config.registry.dockey: dockey}
+    config.registry.signer = signer = Signer(settings.get('dockey', '').decode('hex'))
+    config.registry.dockey = dockey = signer.hex_vk()[:8]
+    verifier = Verifier(signer.hex_vk())
+    config.registry.dockeyring = dockeyring = {dockey: verifier}
+    dockeys = settings.get('dockeys') if 'dockeys' in settings else Signer().hex_vk()
     for key in dockeys.split('\0'):
-        decoded_key = b64decode(key)
-        dockeyring[decoded_key.encode('hex')[2:10]] = ECC(pubkey=decoded_key, curve=curve)
-    apikeys = settings.get('apikeys') if 'apikeys' in settings else b64encode(ECC(curve=curve).get_pubkey())
-    config.registry.dockey = dockey.get_pubkey().encode('hex')[2:10]
-    config.registry.keyring = keyring = {config.registry.dockey: dockey}
+        dockeyring[key[:8]] = Verifier(key)
+    config.registry.keyring = keyring = {dockey: verifier}
+    apikeys = settings.get('apikeys') if 'apikeys' in settings else Signer().hex_vk()
     for key in apikeys.split('\0'):
-        decoded_key = b64decode(key)
-        keyring[decoded_key.encode('hex')[2:10]] = ECC(pubkey=decoded_key, curve=curve)
-    config.registry.apikey = decoded_key.encode('hex')[2:10]
+        keyring[key[:8]] = Verifier(key)
+    config.registry.apikey = key[:8]
 
     # search for storage
     storage = settings.get('storage')

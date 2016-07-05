@@ -17,9 +17,9 @@ def register_view(request):
         }
     md5 = request.POST['hash']
     uuid = request.registry.storage.register(md5)
-    signature = quote(b64encode(request.registry.dockeyring[request.registry.dockey].sign(uuid)))
+    signature = quote(b64encode(request.registry.signer.signature(uuid)))
     upload_url = request.route_url('upload_file', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
-    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign("{}\0{}".format(uuid, md5))))
+    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5))))
     url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
     request.response.status = 201
     request.response.headers['Location'] = upload_url
@@ -37,10 +37,9 @@ def upload_view(request):
     post_file = request.POST['file']
     uuid, md5, content_type, filename = request.registry.storage.upload(post_file)
     expires = int(time()) + EXPIRES
-    mess = "{}\0{}".format(uuid, expires)
-    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign("{}\0{}".format(uuid, md5))))
+    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5))))
     url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
-    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign(mess)))
+    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, expires))))
     get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey})
     request.response.headers['Location'] = get_url
     return {'data': {'url': url, 'hash': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
@@ -78,7 +77,10 @@ def upload_file_view(request):
             "status": "error",
             "errors": [{"location": "url", "name": "Signature", "description": "Signature invalid"}]
         }
-    if not key.verify(signature, uuid):
+    try:
+        if uuid != key.verify(signature + uuid.encode("utf-8")):
+            raise ValueError
+    except ValueError:
         request.response.status = 403
         return {
             "status": "error",
@@ -106,10 +108,9 @@ def upload_file_view(request):
             "errors": [{"location": "body", "name": "file", "description": "Invalid checksum"}]
         }
     expires = int(time()) + EXPIRES
-    mess = "{}\0{}".format(uuid, expires)
-    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign("{}\0{}".format(uuid, md5))))
+    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5))))
     url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
-    signature = quote(b64encode(request.registry.keyring[request.registry.dockey].sign(mess)))
+    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, expires))))
     get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey})
     return {'data': {'url': url, 'hash': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
@@ -158,7 +159,10 @@ def get_view(request):
             "status": "error",
             "errors": [{"location": "url", "name": "Signature", "description": "Signature invalid"}]
         }
-    if not key.verify(signature, mess):
+    try:
+        if mess != key.verify(signature + mess.encode("utf-8")):
+            raise ValueError
+    except ValueError:
         request.response.status = 403
         return {
             "status": "error",
