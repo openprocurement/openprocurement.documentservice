@@ -2,11 +2,9 @@ language: python
 sudo: required
 before_script:
   - sudo add-apt-repository ppa:chris-lea/libsodium -y
-  - sudo apt-get install libsodium
+  - sudo apt-get update && sudo apt-get install libsodium
 python:
   - "2.7"
-services:
-  - couchdb
 env:
   global:
     - TZ=Europe/Kiev
