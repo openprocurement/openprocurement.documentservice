@@ -1,11 +1,8 @@
 language: python
-sudo: false
-addons:
-  apt:
-    sources:
-    - ppa:chris-lea/libsodium
-    packages:
-    - libsodium
+sudo: required
+before_script:
+  - sudo add-apt-repository ppa:chris-lea/libsodium -y
+  - sudo apt-get install libsodium
 python:
   - "2.7"
 services:
