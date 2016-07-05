@@ -2,7 +2,7 @@ language: python
 sudo: required
 before_script:
   - sudo add-apt-repository ppa:chris-lea/libsodium -y
-  - sudo apt-get update && sudo apt-get install libsodium
+  - sudo apt-get update && sudo apt-get install libsodium13
 python:
   - "2.7"
 env:
