@@ -1,52 +1,12 @@
 import gevent.monkey
 gevent.monkey.patch_all()
-import os
-from ConfigParser import ConfigParser
-from base64 import b64encode, b64decode
-from hashlib import sha512
 from libnacl.sign import Signer, Verifier
-from logging import getLogger
+from openprocurement.documentservice.utils import auth_check, Root, add_logging_context, read_users
 from pkg_resources import iter_entry_points
 from pyramid.authentication import BasicAuthAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
-from pyramid.security import Allow
-from pytz import timezone
-
-LOGGER = getLogger(__name__)
-TZ = timezone(os.environ['TZ'] if 'TZ' in os.environ else 'Europe/Kiev')
-USERS = {}
-
-
-def auth_check(username, password, request):
-    if username in USERS and USERS[username]['password'] == sha512(password).hexdigest():
-        return ['g:{}'.format(USERS[username]['group'])]
-
-
-class Root(object):
-    def __init__(self, request):
-        pass
-
-    __acl__ = [
-        (Allow, 'g:uploaders', 'upload'),
-        (Allow, 'g:api', 'upload'),
-        ]
-
-
-def read_users(filename):
-    config = ConfigParser()
-    config.read(filename)
-    for i in config.sections():
-        USERS.update(dict([
-            (
-                j,
-                {
-                    'password': k,
-                    'group': i
-                }
-            )
-            for j, k in config.items(i)
-        ]))
+from pyramid.events import ContextFound
 
 
 def main(global_config, **settings):
@@ -59,6 +19,7 @@ def main(global_config, **settings):
         authorization_policy=ACLAuthorizationPolicy(),
         root_factory=Root,
     )
+    config.add_subscriber(add_logging_context, ContextFound)
     config.include('pyramid_exclog')
     config.add_route('register', '/register')
     config.add_route('upload', '/upload')
