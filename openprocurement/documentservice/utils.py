@@ -1,15 +1,9 @@
 import os
 from ConfigParser import ConfigParser
-from base64 import b64encode, b64decode
 from datetime import datetime
 from hashlib import sha512
 from json import dumps
-from libnacl.sign import Signer, Verifier
 from logging import getLogger
-from pkg_resources import iter_entry_points
-from pyramid.authentication import BasicAuthAuthenticationPolicy
-from pyramid.authorization import ACLAuthorizationPolicy
-from pyramid.config import Configurator
 from pyramid.security import Allow
 from pytz import timezone
 
@@ -30,7 +24,7 @@ class Root(object):
     __acl__ = [
         (Allow, 'g:uploaders', 'upload'),
         (Allow, 'g:api', 'upload'),
-        ]
+    ]
 
 
 def read_users(filename):
