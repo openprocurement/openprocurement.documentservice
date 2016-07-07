@@ -18,9 +18,9 @@ def register_view(request):
     md5 = request.POST['hash']
     uuid = request.registry.storage.register(md5)
     signature = quote(b64encode(request.registry.signer.signature(uuid)))
-    upload_url = request.route_url('upload_file', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
+    upload_url = request.route_url('upload_file', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.upload_host or request.domain)
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5))))
-    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
+    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
     request.response.status = 201
     request.response.headers['Location'] = upload_url
     return {'data': {'url': url, 'hash': md5}, 'upload_url': upload_url}
@@ -38,9 +38,9 @@ def upload_view(request):
     uuid, md5, content_type, filename = request.registry.storage.upload(post_file)
     expires = int(time()) + EXPIRES
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5))))
-    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
+    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, expires))))
-    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey})
+    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
     request.response.headers['Location'] = get_url
     return {'data': {'url': url, 'hash': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
@@ -109,9 +109,9 @@ def upload_file_view(request):
         }
     expires = int(time()) + EXPIRES
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5))))
-    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey})
+    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, expires))))
-    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey})
+    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
     return {'data': {'url': url, 'hash': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
 

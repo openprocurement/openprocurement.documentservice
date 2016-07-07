@@ -79,6 +79,9 @@ def main(global_config, **settings):
         keyring[key[:8]] = Verifier(key)
     config.registry.apikey = key[:8]
 
+    config.registry.upload_host = settings.get('upload_host')
+    config.registry.get_host = settings.get('get_host')
+
     # search for storage
     storage = settings.get('storage')
     for entry_point in iter_entry_points('openprocurement.documentservice.plugins', storage):
