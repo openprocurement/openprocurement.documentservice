@@ -1,19 +1,19 @@
-from pyramid.view import view_config
 from base64 import b64encode, b64decode
-from time import time
-from urllib import quote, unquote
+from logging import getLogger
 from openprocurement.documentservice.storage import StorageRedirect, HashInvalid, KeyNotFound, NoContent, ContentUploaded
 from openprocurement.documentservice.utils import error_handler, context_unpack
-from logging import getLogger
+from pyramid.httpexceptions import HTTPNoContent
+from pyramid.view import view_config
+from time import time
+from urllib import quote, unquote
 
 LOGGER = getLogger(__name__)
 EXPIRES = 300
 
 
-@view_config(route_name='status', renderer='json')
+@view_config(route_name='status')
 def status_view(request):
-    request.response.status = 204
-    request.response.content_type = ''
+    return HTTPNoContent()
 
 
 @view_config(route_name='register', renderer='json', request_method='POST', permission='upload')
@@ -124,9 +124,7 @@ def get_view(request):
     except KeyNotFound:
         return error_handler(request, 404, {"location": "url", "name": "doc_id", "description": "Not Found"})
     except NoContent:
-        request.response.status = 204
-        request.response.content_type = ''
-        return
+        return HTTPNoContent()
     except StorageRedirect as e:
         request.response.status = 302
         request.response.headers['Location'] = e.url
