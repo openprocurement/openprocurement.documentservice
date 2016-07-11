@@ -8,9 +8,9 @@ from openprocurement.documentservice.tests.base import BaseWebTest
 class SimpleTest(BaseWebTest):
 
     def test_root(self):
-        response = self.app.get('/', status=404)
-        self.assertEqual(response.status, '404 Not Found')
-        self.assertEqual(response.content_type, 'text/plain')
+        response = self.app.get('/')
+        self.assertEqual(response.status, '204 No Content')
+        self.assertEqual(response.content_type, None)
 
     def test_register_get(self):
         response = self.app.get('/register', status=404)
