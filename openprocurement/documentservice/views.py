@@ -10,6 +10,12 @@ LOGGER = getLogger(__name__)
 EXPIRES = 300
 
 
+@view_config(route_name='status', renderer='json')
+def status_view(request):
+    request.response.status = 204
+    request.response.content_type = ''
+
+
 @view_config(route_name='register', renderer='json', request_method='POST', permission='upload')
 def register_view(request):
     if 'hash' not in request.POST:

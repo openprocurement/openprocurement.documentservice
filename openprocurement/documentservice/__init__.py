@@ -21,6 +21,7 @@ def main(global_config, **settings):
     )
     config.add_subscriber(add_logging_context, ContextFound)
     config.include('pyramid_exclog')
+    config.add_route('status', '/')
     config.add_route('register', '/register')
     config.add_route('upload', '/upload')
     config.add_route('upload_file', '/upload/{doc_id}')
