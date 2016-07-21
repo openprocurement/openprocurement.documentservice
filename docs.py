@@ -54,7 +54,7 @@ class TenderResourceTest(BaseWebTest):
 
     def test_docs(self):
         with open('docs/source/tutorial/register.http', 'w') as self.app.file_obj:
-            md5hash = md5('content').hexdigest()
+            md5hash = 'md5:' + md5('content').hexdigest()
             response = self.app.post('/register', {'hash': md5hash, 'filename': 'file.txt'})
             self.assertEqual(response.status, '201 Created')
             self.assertEqual(response.content_type, 'application/json')

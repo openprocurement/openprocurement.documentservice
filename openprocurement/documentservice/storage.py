@@ -69,8 +69,8 @@ class MemoryStorage:
             key = self.storage[uuid] = {}
         content = in_file.read()
         key_md5 = key.get('hash')
-        md5hash = md5(content).hexdigest()
-        if key_md5 and md5(content).hexdigest() != key_md5:
+        md5hash = 'md5:' + md5(content).hexdigest()
+        if key_md5 and md5hash != key_md5:
             raise HashInvalid(key_md5)
         key['hash'] = md5hash
         key['Content-Type'] = content_type

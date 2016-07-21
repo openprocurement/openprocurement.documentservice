@@ -1,21 +1,21 @@
 POST /register HTTP/1.0
 Authorization: Basic YnJva2VyOmJyb2tlcg==
-Content-Length: 55
+Content-Length: 61
 Content-Type: application/x-www-form-urlencoded
 Host: docs-sandbox.openprocurement.org
 
-hash=9a0364b9e99bb480dd25e1f0284c8555&filename=file.txt
+hash=md5%3A9a0364b9e99bb480dd25e1f0284c8555&filename=file.txt
 
 
 201 Created
 Content-Type: application/json; charset=UTF-8
-Location: http://docs-sandbox.openprocurement.org/upload/6c4503d85a614f78b1ef9cd104882e28?KeyID=37afbb51&Signature=mQyAjy41T1giTfCj2wkDmTVUlRHAzI3FrfGd5DvsmFvDCAqeQPIPP81F5jraZSffxVsGGZvCx6W1A6fVGgHQCw%253D%253D
+Location: http://docs-sandbox.openprocurement.org/upload/5859312b16d045faa41f2e1ba716b542?KeyID=e8946325&Signature=3v981%252BAArkotyuG7tcEsUDu%252BDM56tTs9oKEv1mNjIWK0gKhZvVrmxjmru4gkft%252Bjbi2WmRhEv81cXNlzZoKvBg%253D%253D
 
 {
-  "upload_url": "http://docs-sandbox.openprocurement.org/upload/6c4503d85a614f78b1ef9cd104882e28?KeyID=37afbb51&Signature=mQyAjy41T1giTfCj2wkDmTVUlRHAzI3FrfGd5DvsmFvDCAqeQPIPP81F5jraZSffxVsGGZvCx6W1A6fVGgHQCw%253D%253D", 
+  "upload_url": "http://docs-sandbox.openprocurement.org/upload/5859312b16d045faa41f2e1ba716b542?KeyID=e8946325&Signature=3v981%252BAArkotyuG7tcEsUDu%252BDM56tTs9oKEv1mNjIWK0gKhZvVrmxjmru4gkft%252Bjbi2WmRhEv81cXNlzZoKvBg%253D%253D", 
   "data": {
-    "url": "http://docs-sandbox.openprocurement.org/get/6c4503d85a614f78b1ef9cd104882e28?KeyID=37afbb51&Signature=iI3lDDleJxVGWQz9fK0KWsFGwqnFxYSW4zhP0kO5uQz1%252BnoJn0mHa0F9hbJw1FRqaoDg8wseD1V0JIdR225bDQ%253D%253D", 
-    "hash": "9a0364b9e99bb480dd25e1f0284c8555"
+    "url": "http://docs-sandbox.openprocurement.org/get/5859312b16d045faa41f2e1ba716b542?KeyID=e8946325&Signature=4xUKw8%2Fyj0IBulCCxqGLTbUWhtmT%2F1HUmUwBTT4%2FLc6HY%2F2xV6jtSRx%2FRSFSslSoYBzeP1YcvEVSPGwJHQ%252BkAw%253D%253D", 
+    "hash": "md5:9a0364b9e99bb480dd25e1f0284c8555"
   }
 }
 
