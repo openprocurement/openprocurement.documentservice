@@ -3,6 +3,8 @@
 Tutorial
 ========
 
+.. _upload-document-with-registration:
+
 Upload document with registration
 ---------------------------------
 
@@ -16,11 +18,15 @@ Upload document:
 .. include:: tutorial/upload.http
    :code:
 
+.. _upload-document-w-o-registration:
+
 Upload document w/o registration
 --------------------------------
 
 .. include:: tutorial/upload-file.http
    :code:
+
+.. _get-document:
 
 Get document
 ------------
