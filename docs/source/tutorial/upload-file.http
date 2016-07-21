@@ -1,26 +1,26 @@
 POST /upload HTTP/1.0
 Authorization: Basic YnJva2VyOmJyb2tlcg==
 Content-Length: 179
-Content-Type: multipart/form-data; boundary=----------a_BoUnDaRy339650440173$
-Host: docs.api-sandbox.openprocurement.org
+Content-Type: multipart/form-data; boundary=----------a_BoUnDaRy363349153179$
+Host: docs-sandbox.openprocurement.org
 
-------------a_BoUnDaRy339650440173$
+------------a_BoUnDaRy363349153179$
 Content-Disposition: form-data; name="file"; filename="file.txt"
 Content-Type: text/plain
 
 content
-------------a_BoUnDaRy339650440173$--
+------------a_BoUnDaRy363349153179$--
 
 
 
 200 OK
 Content-Type: application/json; charset=UTF-8
-Location: http://docs.api-sandbox.openprocurement.org/get/1a4ccd22ac4d4d288e27e6ed37f9c322?Expires=1467737469&KeyID=21e1b21e&Signature=QcFwJWPxaa%252Bvp5MyNiMLn10T0GnsepVdkkD9W84UXr3govyJ2sU1oFVmf1vptx2DUAwdWi56VfOqyFWJbtKzAw%253D%253D
+Location: http://docs-sandbox.openprocurement.org/get/5e2b0a861ac7444dbcde7c4b3db65fc8?Expires=1469095533&KeyID=37afbb51&Signature=tKNf%252BcpLDu1qPGtLWlvb4f%252BX7o%2FhQbf1CQk%2FVk14CEmikn2N10OOnYshInPT7PXdUwNv3NP%2F9jQSCWo3wXsjAA%253D%253D
 
 {
-  "get_url": "http://docs.api-sandbox.openprocurement.org/get/1a4ccd22ac4d4d288e27e6ed37f9c322?Expires=1467737469&KeyID=21e1b21e&Signature=QcFwJWPxaa%252Bvp5MyNiMLn10T0GnsepVdkkD9W84UXr3govyJ2sU1oFVmf1vptx2DUAwdWi56VfOqyFWJbtKzAw%253D%253D", 
+  "get_url": "http://docs-sandbox.openprocurement.org/get/5e2b0a861ac7444dbcde7c4b3db65fc8?Expires=1469095533&KeyID=37afbb51&Signature=tKNf%252BcpLDu1qPGtLWlvb4f%252BX7o%2FhQbf1CQk%2FVk14CEmikn2N10OOnYshInPT7PXdUwNv3NP%2F9jQSCWo3wXsjAA%253D%253D", 
   "data": {
-    "url": "http://docs.api-sandbox.openprocurement.org/get/1a4ccd22ac4d4d288e27e6ed37f9c322?KeyID=21e1b21e&Signature=RbT3RyJSRLt9FCjv2w%252BtoJT1bWJC9af84eR773RCBI8UsDpir6MZGS4ps7ik5icoUlf%2FfpmJkDZWlg72%252Bp66Dw%253D%253D", 
+    "url": "http://docs-sandbox.openprocurement.org/get/5e2b0a861ac7444dbcde7c4b3db65fc8?KeyID=37afbb51&Signature=mAJf1vDy5TyxTQLWhqsD3tWWYJqtyu7TU5vgEx4XWGOzxjVeMYTtc3bqWw5pHBts4VKInLOF5Aehj%2FVo3XxgCA%253D%253D", 
     "format": "text/plain", 
     "hash": "9a0364b9e99bb480dd25e1f0284c8555", 
     "title": "file.txt"

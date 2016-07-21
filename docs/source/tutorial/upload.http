@@ -1,15 +1,15 @@
-POST /upload/9be740448a464fcd831185dafb82b70a?KeyID=21e1b21e&Signature=Sx9PlkGNfRl839V7OTTpvspJSv99Ft%2FcOKdXXSYvy6z1HIux9m%252BrDkAArIh3FUJsbB5bW8HwFUxNiNhi43lHBQ%253D%253D HTTP/1.0
+POST /upload/6c4503d85a614f78b1ef9cd104882e28?KeyID=37afbb51&Signature=mQyAjy41T1giTfCj2wkDmTVUlRHAzI3FrfGd5DvsmFvDCAqeQPIPP81F5jraZSffxVsGGZvCx6W1A6fVGgHQCw%253D%253D HTTP/1.0
 Authorization: Basic YnJva2VyOmJyb2tlcg==
 Content-Length: 179
-Content-Type: multipart/form-data; boundary=----------a_BoUnDaRy460497694743$
-Host: docs.api-sandbox.openprocurement.org
+Content-Type: multipart/form-data; boundary=----------a_BoUnDaRy679797881491$
+Host: docs-sandbox.openprocurement.org
 
-------------a_BoUnDaRy460497694743$
+------------a_BoUnDaRy679797881491$
 Content-Disposition: form-data; name="file"; filename="file.txt"
 Content-Type: text/plain
 
 content
-------------a_BoUnDaRy460497694743$--
+------------a_BoUnDaRy679797881491$--
 
 
 
@@ -17,9 +17,9 @@ content
 Content-Type: application/json; charset=UTF-8
 
 {
-  "get_url": "http://docs.api-sandbox.openprocurement.org/get/9be740448a464fcd831185dafb82b70a?Expires=1467737469&KeyID=21e1b21e&Signature=EIQTMEZfOLsoHsnz0OxI3gr7nwmuAokm7p%2FW5sPwv%252BqXhc%252BV8c2%2FFBSAq2ux3ZK3dobboYI4r3gqJ0aaz0ebDQ%253D%253D", 
+  "get_url": "http://docs-sandbox.openprocurement.org/get/6c4503d85a614f78b1ef9cd104882e28?Expires=1469095533&KeyID=37afbb51&Signature=2HhuTEuqX2ssvMN0Um5m6J22kacJG4h5nueo8OCO%2FjmqPI29tMooAd1BJMDiINJ0XIFDNLkCDQA8N3MfWsU8Cw%253D%253D", 
   "data": {
-    "url": "http://docs.api-sandbox.openprocurement.org/get/9be740448a464fcd831185dafb82b70a?KeyID=21e1b21e&Signature=2UyCtqlO51VlL%2FGjbymA0n%252BaMY8TUDXwMqPVHE4t9yaoctqtrOWOoKOym9q28GLJHoTg1JNWdTgBoeJBHL38AQ%253D%253D", 
+    "url": "http://docs-sandbox.openprocurement.org/get/6c4503d85a614f78b1ef9cd104882e28?KeyID=37afbb51&Signature=iI3lDDleJxVGWQz9fK0KWsFGwqnFxYSW4zhP0kO5uQz1%252BnoJn0mHa0F9hbJw1FRqaoDg8wseD1V0JIdR225bDQ%253D%253D", 
     "format": "text/plain", 
     "hash": "9a0364b9e99bb480dd25e1f0284c8555", 
     "title": "file.txt"
