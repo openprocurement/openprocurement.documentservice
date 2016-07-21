@@ -11,6 +11,7 @@ Upload document with registration
 .. _register-document-upload:
 
 Register document upload:
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. include:: tutorial/register.http
    :code:
@@ -18,6 +19,7 @@ Register document upload:
 .. _upload-document:
 
 Upload document:
+^^^^^^^^^^^^^^^^
 
 .. include:: tutorial/upload.http
    :code:
