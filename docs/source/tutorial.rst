@@ -8,10 +8,14 @@ Tutorial
 Upload document with registration
 ---------------------------------
 
+.. _register-document-upload:
+
 Register document upload:
 
 .. include:: tutorial/register.http
    :code:
+
+.. _upload-document:
 
 Upload document:
 
