@@ -11,9 +11,9 @@ LOGGER = getLogger(__name__)
 EXPIRES = 300
 
 
-@view_config(route_name='status')
+@view_config(route_name='status', renderer='string')
 def status_view(request):
-    return HTTPNoContent()
+    return ''
 
 
 @view_config(route_name='register', renderer='json', request_method='POST', permission='upload')

@@ -9,8 +9,9 @@ class SimpleTest(BaseWebTest):
 
     def test_root(self):
         response = self.app.get('/')
-        self.assertEqual(response.status, '204 No Content')
-        self.assertEqual(response.content_type, 'text/html')
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.content_type, 'text/plain')
+        self.assertEqual(response.body, '')
 
     def test_register_get(self):
         response = self.app.get('/register', status=404)
