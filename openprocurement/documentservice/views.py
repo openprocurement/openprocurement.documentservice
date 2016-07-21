@@ -25,7 +25,7 @@ def register_view(request):
         return error_handler(request, 422, {"location": "body", "name": "hash", "description": [u'Hash type is not supported.']})
     if len(md5) != 36:
         return error_handler(request, 422, {"location": "body", "name": "hash", "description": [u'Hash value is wrong length.']})
-    if set(md5[5:]).difference('0123456789abcdef'):
+    if set(md5[4:]).difference('0123456789abcdef'):
         return error_handler(request, 422, {"location": "body", "name": "hash", "description": [u'Hash value is not hexadecimal.']})
     uuid = request.registry.storage.register(md5)
     LOGGER.info('Registered new document upload {}'.format(uuid),
@@ -48,7 +48,7 @@ def upload_view(request):
     LOGGER.info('Uploaded new document {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'uploaded_new_document'}, {'doc_id': uuid, 'doc_hash': md5}))
     expires = int(time()) + EXPIRES
-    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5[5:]))))
+    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5[4:]))))
     url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, expires))))
     get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
@@ -89,7 +89,7 @@ def upload_file_view(request):
     LOGGER.info('Uploaded document {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'uploaded_document'}, {'doc_hash': md5}))
     expires = int(time()) + EXPIRES
-    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5[5:]))))
+    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5[4:]))))
     url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, expires))))
     get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
