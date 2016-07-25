@@ -1,5 +1,4 @@
-GET /get/7ae23322031f4960917d68681d6debcc?Expires=1469116187&KeyID=fe3fec9c&Signature=ov%2FwJ%2FGsBIFzxdNMvRSo1LxTeXTxZXghCY2M7Hhv%2FGaQ9W9LWqnlGZj%2FW5nz3YGxE3Sju5v7UPtvdGw3yZ%252BYBw%253D%253D HTTP/1.0
-Authorization: Basic YnJva2VyOmJyb2tlcg==
+GET /get/c7cf326f09d44705be6cf67dd0017fd7?Expires=1469454319&KeyID=bc143495&Signature=KhHDph8Zw7YT9yq%252Biz19uB8KF4rZnlBJRssmyILKLLyRZV7M9QbN5uTu8QoceMi%252B3KWE4sK3rVgA%252BP22GgbrAg%253D%253D HTTP/1.0
 Host: docs-sandbox.openprocurement.org
 
 
