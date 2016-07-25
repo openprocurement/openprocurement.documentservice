@@ -9,12 +9,12 @@ hash=md5%3A9a0364b9e99bb480dd25e1f0284c8555
 
 201 Created
 Content-Type: application/json; charset=UTF-8
-Location: http://docs-sandbox.openprocurement.org/upload/c7cf326f09d44705be6cf67dd0017fd7?KeyID=bc143495&Signature=D52UlSovRjP7xCPu9yxOc%2Fu5l%2FN8AA61%2F50LpXj2%252BzdM3kZytPZ0rImkIyFlD5L3ygSqqCzUmyxwn164VCXkAQ%253D%253D
+Location: http://docs-sandbox.openprocurement.org/upload/a6754e7c32a542fcb9a56ca598064be3?KeyID=d06070b8&Signature=IMlA7SU1lQXGm7qGFBJQD7QEWv6K9ms9%2FcllUsQbbBLhWf48O5RVluaToch3Eopd%2FMoxXCozpL0gN6J65yeVCg%253D%253D
 
 {
-  "upload_url": "http://docs-sandbox.openprocurement.org/upload/c7cf326f09d44705be6cf67dd0017fd7?KeyID=bc143495&Signature=D52UlSovRjP7xCPu9yxOc%2Fu5l%2FN8AA61%2F50LpXj2%252BzdM3kZytPZ0rImkIyFlD5L3ygSqqCzUmyxwn164VCXkAQ%253D%253D", 
+  "upload_url": "http://docs-sandbox.openprocurement.org/upload/a6754e7c32a542fcb9a56ca598064be3?KeyID=d06070b8&Signature=IMlA7SU1lQXGm7qGFBJQD7QEWv6K9ms9%2FcllUsQbbBLhWf48O5RVluaToch3Eopd%2FMoxXCozpL0gN6J65yeVCg%253D%253D", 
   "data": {
-    "url": "http://docs-sandbox.openprocurement.org/get/c7cf326f09d44705be6cf67dd0017fd7?KeyID=bc143495&Signature=L01K6hHOvXnNGt2efcu9pRBnnY76MbKU8%252BUVG658Re8Lmej08omCfChykQU1nmtC06SNJFrFVifCtC1ttjq0Ag%253D%253D", 
+    "url": "http://docs-sandbox.openprocurement.org/get/a6754e7c32a542fcb9a56ca598064be3?KeyID=d06070b8&Signature=sKX3ICZh%252B61vhvLGgfrs00jdo63IfIcdB247Z40FDCxxY4eG6h2v1fA0FNsTlbRiEQSzFar0DbenFvp6M7vbDg%253D%253D", 
     "hash": "md5:9a0364b9e99bb480dd25e1f0284c8555"
   }
 }

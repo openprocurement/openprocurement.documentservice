@@ -16,11 +16,22 @@ def status_view(request):
     return ''
 
 
+def get_data(request):
+    try:
+        json = request.json_body
+    except ValueError:
+        data = request.POST.mixed()
+    else:
+        data = json.get('data', {})
+    return data
+
+
 @view_config(route_name='register', renderer='json', request_method='POST', permission='upload')
 def register_view(request):
-    if 'hash' not in request.POST:
+    data = get_data(request)
+    if 'hash' not in data:
         return error_handler(request, 404, {"location": "body", "name": "hash", "description": "Not Found"})
-    md5 = request.POST['hash']
+    md5 = data['hash']
     if not md5.startswith('md5:'):
         return error_handler(request, 422, {"location": "body", "name": "hash", "description": [u'Hash type is not supported.']})
     if len(md5) != 36:
@@ -33,10 +44,10 @@ def register_view(request):
     signature = quote(b64encode(request.registry.signer.signature(uuid)))
     upload_url = request.route_url('upload_file', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.upload_host or request.domain)
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5))))
-    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
+    data['url'] = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain)
     request.response.status = 201
     request.response.headers['Location'] = upload_url
-    return {'data': {'url': url, 'hash': md5}, 'upload_url': upload_url}
+    return {'data': data, 'upload_url': upload_url}
 
 
 @view_config(route_name='upload', renderer='json', request_method='POST', permission='upload')

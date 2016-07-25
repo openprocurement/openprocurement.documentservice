@@ -71,7 +71,12 @@ class SimpleTest(BaseWebTest):
         ])
 
     def test_register_post(self):
-        response = self.app.post('/register', {'hash': 'md5:' + '0' * 32, 'filename': 'file.txt'})
+        response = self.app.post('/register', {'hash': 'md5:' + '0' * 32})
+        self.assertEqual(response.status, '201 Created')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertIn('http://localhost/upload/', response.json['upload_url'])
+
+        response = self.app.post_json('/register', {'data': {'hash': 'md5:' + '0' * 32}})
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('http://localhost/upload/', response.json['upload_url'])

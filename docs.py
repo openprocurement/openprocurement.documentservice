@@ -74,6 +74,13 @@ class TenderResourceTest(BaseWebTest):
             self.assertEqual(response.body, 'content')
 
         self.app.authorization = ('Basic', ('broker', 'broker'))
+        with open('docs/source/tutorial/register-json.http', 'w') as self.app.file_obj:
+            md5hash = 'md5:' + md5('content').hexdigest()
+            response = self.app.post_json('/register', {'data': {'hash': md5hash}})
+            self.assertEqual(response.status, '201 Created')
+            self.assertEqual(response.content_type, 'application/json')
+            self.assertIn('http://docs-sandbox.openprocurement.org/upload/', response.json['upload_url'])
+
         with open('docs/source/tutorial/upload-file.http', 'w') as self.app.file_obj:
             response = self.app.post('/upload', upload_files=[('file', u'file.txt', 'content')])
             self.assertEqual(response.status, '200 OK')

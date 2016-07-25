@@ -16,6 +16,11 @@ Register document upload:
 .. include:: tutorial/register.http
    :code:
 
+or:
+
+.. include:: tutorial/register-json.http
+   :code:
+
 .. _upload-document:
 
 Upload document:

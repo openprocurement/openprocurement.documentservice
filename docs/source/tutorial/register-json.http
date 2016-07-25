@@ -1,0 +1,25 @@
+POST /register HTTP/1.0
+Authorization: Basic YnJva2VyOmJyb2tlcg==
+Content-Length: 58
+Content-Type: application/json
+Host: docs-sandbox.openprocurement.org
+
+{
+  "data": {
+    "hash": "md5:9a0364b9e99bb480dd25e1f0284c8555"
+  }
+}
+
+
+201 Created
+Content-Type: application/json; charset=UTF-8
+Location: http://docs-sandbox.openprocurement.org/upload/389684cc28c242b79c97c56be5142e25?KeyID=d06070b8&Signature=%252Bgia5OJqJwJgOjGadnGPmL0%252BPYNs7CXokIz2Eb%252B1ujKrZu7vrIBsK1hYzzj5Az7GPkr12l5%2FT17zFLExNU6TAw%253D%253D
+
+{
+  "upload_url": "http://docs-sandbox.openprocurement.org/upload/389684cc28c242b79c97c56be5142e25?KeyID=d06070b8&Signature=%252Bgia5OJqJwJgOjGadnGPmL0%252BPYNs7CXokIz2Eb%252B1ujKrZu7vrIBsK1hYzzj5Az7GPkr12l5%2FT17zFLExNU6TAw%253D%253D", 
+  "data": {
+    "url": "http://docs-sandbox.openprocurement.org/get/389684cc28c242b79c97c56be5142e25?KeyID=d06070b8&Signature=Ky2HmhmupginXHtbTZO5kjqqgSZhe96u5FEvwIyl%252Bg4lNqFx7ykJjSoUoek%2FyuK3l3uyiBOaSrwWdT3RQF1%2FBA%253D%253D", 
+    "hash": "md5:9a0364b9e99bb480dd25e1f0284c8555"
+  }
+}
+
