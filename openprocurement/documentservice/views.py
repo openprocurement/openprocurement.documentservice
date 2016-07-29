@@ -122,7 +122,7 @@ def get_view(request):
     mess = "{}\0{}".format(uuid, expires) if expires else uuid
     if request.GET.get('Prefix'):
         mess = '{}/{}'.format(request.GET['Prefix'], mess)
-        keyid = '{}/{}'.format(request.GET['Prefix'], uuid)
+        uuid = '{}/{}'.format(request.GET['Prefix'], uuid)
     key = request.registry.keyring.get(keyid)
     if 'Signature' not in request.GET:
         return error_handler(request, 403, {"location": "url", "name": "Signature", "description": "Not Found"})
