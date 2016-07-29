@@ -39,8 +39,10 @@ import sys
 import os
 import UserDict
 import urlparse
-
-import rfc6266
+try:
+    import rfc6266
+except ImportError:
+    rfc6266 = None
 
 from warnings import filterwarnings, catch_warnings, warn
 with catch_warnings():
@@ -457,9 +459,11 @@ class FieldStorage:
 
         # Process content-disposition header
         cdisp, pdict = "", {}
-        if 'content-disposition' in self.headers:
+        if 'content-disposition' in self.headers and rfc6266:
             cd = rfc6266.parse_headers(self.headers['content-disposition'], relaxed=True)
             cdisp, pdict = cd.disposition, cd.assocs
+        elif 'content-disposition' in self.headers:
+            cdisp, pdict = parse_header(self.headers['content-disposition'])
         self.disposition = cdisp
         self.disposition_options = pdict
         self.name = None
