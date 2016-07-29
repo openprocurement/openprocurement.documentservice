@@ -5,7 +5,9 @@ from hashlib import sha512
 from json import dumps
 from logging import getLogger
 from pyramid.security import Allow
+from pyramid.httpexceptions import exception_response
 from pytz import timezone
+from webob.multidict import NestedMultiDict
 
 LOGGER = getLogger(__name__)
 TZ = timezone(os.environ['TZ'] if 'TZ' in os.environ else 'Europe/Kiev')
@@ -43,11 +45,27 @@ def read_users(filename):
         ]))
 
 
+def request_params(request):
+    try:
+        params = NestedMultiDict(request.GET, request.POST)
+    except UnicodeDecodeError:
+        response = exception_response(422)
+        response.body = dumps(error_handler(request, response.code, {"location": "body", "name": "data", "description": "could not decode params"}))
+        response.content_type = 'application/json'
+        raise response
+    except Exception, e:
+        response = exception_response(422)
+        response.body = dumps(error_handler(request, response.code, {"location": "body", "name": str(e.__class__.__name__), "description": str(e)}))
+        response.content_type = 'application/json'
+        raise response
+    return params
+
+
 def add_logging_context(event):
     request = event.request
-    params = {
+    request.logging_context = params = {
         'API_KEY': request.registry.apikey,
-        'DOC_KEY': request.registry.apikey,
+        'DOC_KEY': request.registry.dockey,
         'TAGS': 'python,docs',
         'CURRENT_URL': request.url,
         'CURRENT_PATH': request.path_info,
@@ -61,8 +79,6 @@ def add_logging_context(event):
     if request.matchdict:
         for i, j in request.matchdict.items():
             params[i.upper()] = j
-
-    request.logging_context = params
 
 
 def update_logging_context(request, params):

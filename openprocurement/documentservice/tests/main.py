@@ -2,6 +2,8 @@
 
 import unittest
 from hashlib import md5
+from six import BytesIO
+from urllib import quote
 from openprocurement.documentservice.tests.base import BaseWebTest
 
 
@@ -91,8 +93,32 @@ class SimpleTest(BaseWebTest):
             {u'description': u'Not Found', u'location': u'body', u'name': u'file'}
         ])
 
+        body = u'''--BOUNDARY\nContent-Disposition: form-data; name="file"; filename={}\nContent-Type: application/msword\n\ncontent\n'''.format(u'\uff07')
+        environ = self.app._make_environ()
+        environ['CONTENT_TYPE'] = 'multipart/form-data; boundary=BOUNDARY'
+        environ['REQUEST_METHOD'] = 'POST'
+        req = self.app.RequestClass.blank(self.app._remove_fragment('/upload'), environ)
+        req.environ['wsgi.input'] = BytesIO(body.encode('utf8'))
+        req.content_length = len(body)
+        response = self.app.do_request(req, status=422)
+        self.assertEqual(response.status, '422 Unprocessable Entity')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.json['errors'][0]["description"], "could not decode params")
+
     def test_upload_post(self):
         response = self.app.post('/upload', upload_files=[('file', u'file.txt', 'content')])
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertIn('http://localhost/get/', response.json['get_url'])
+
+        body = u'''--BOUNDARY\nContent-Disposition: form-data; name="file"; filename*=utf-8''{}\nContent-Type: application/msword\n\ncontent\n'''.format(quote('укр.doc'))
+        environ = self.app._make_environ()
+        environ['CONTENT_TYPE'] = 'multipart/form-data; boundary=BOUNDARY'
+        environ['REQUEST_METHOD'] = 'POST'
+        req = self.app.RequestClass.blank(self.app._remove_fragment('/upload'), environ)
+        req.environ['wsgi.input'] = BytesIO(body.encode(req.charset or 'utf8'))
+        req.content_length = len(body)
+        response = self.app.do_request(req)
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('http://localhost/get/', response.json['get_url'])

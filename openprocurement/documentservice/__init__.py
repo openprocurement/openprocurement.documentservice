@@ -1,7 +1,7 @@
 import gevent.monkey
 gevent.monkey.patch_all()
 from libnacl.sign import Signer, Verifier
-from openprocurement.documentservice.utils import auth_check, Root, add_logging_context, read_users
+from openprocurement.documentservice.utils import auth_check, Root, add_logging_context, read_users, request_params
 from pkg_resources import iter_entry_points
 from pyramid.authentication import BasicAuthAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -19,6 +19,7 @@ def main(global_config, **settings):
         authorization_policy=ACLAuthorizationPolicy(),
         root_factory=Root,
     )
+    config.add_request_method(request_params, 'params', reify=True)
     config.add_subscriber(add_logging_context, ContextFound)
     config.include('pyramid_exclog')
     config.add_route('status', '/')
