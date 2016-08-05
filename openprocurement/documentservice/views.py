@@ -43,7 +43,7 @@ def register_view(request):
                 extra=context_unpack(request, {'MESSAGE_ID': 'registered_upload'}, {'doc_id': uuid, 'doc_hash': md5}))
     signature = quote(b64encode(request.registry.signer.signature(uuid)))
     upload_url = request.route_url('upload_file', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.upload_host or request.domain, _port=request.host_port)
-    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5))))
+    signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5[4:]))))
     data['url'] = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain, _port=request.host_port)
     request.response.status = 201
     request.response.headers['Location'] = upload_url
