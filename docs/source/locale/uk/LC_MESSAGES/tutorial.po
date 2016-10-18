@@ -16,31 +16,24 @@ msgstr ""
 "=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: ../../source/tutorial.rst:4
 msgid "Tutorial"
 msgstr "Туторіал"
 
-#: ../../source/tutorial.rst:9
 msgid "Upload document with registration"
 msgstr "Завантаження документа з реєстрацією"
 
-#: ../../source/tutorial.rst:14
 msgid "Register document upload:"
 msgstr "Зареєструвати завантаження документа:"
 
-#: ../../source/tutorial.rst:19
 msgid "or:"
 msgstr "або:"
 
-#: ../../source/tutorial.rst:27
 msgid "Upload document:"
 msgstr "Завантажити документ:"
 
-#: ../../source/tutorial.rst:35
 msgid "Upload document w/o registration"
 msgstr "Завантаження документа без реєстрації"
 
-#: ../../source/tutorial.rst:43
 msgid "Get document"
 msgstr "Отримання документа"
 
