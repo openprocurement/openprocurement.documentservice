@@ -65,14 +65,16 @@ def add_logging_context(event):
     request = event.request
     request.logging_context = params = {
         'API_KEY': request.registry.apikey,
-        'DOC_KEY': request.registry.dockey,
-        'TAGS': 'python,docs',
-        'CURRENT_URL': request.url,
-        'CURRENT_PATH': request.path_info,
-        'REMOTE_ADDR': request.remote_addr or '',
-        'USER_AGENT': request.user_agent or '',
-        'REQUEST_ID': request.environ.get('REQUEST_ID', ''),
         'CLIENT_REQUEST_ID': request.headers.get('X-Client-Request-ID', ''),
+        'CURRENT_PATH': request.path_info,
+        'CURRENT_URL': request.url,
+        'DOC_KEY': request.registry.dockey,
+        'REMOTE_ADDR': request.remote_addr or '',
+        'REQUEST_ID': request.environ.get('REQUEST_ID', ''),
+        'REQUEST_METHOD': request.method,
+        'TAGS': 'python,docs',
+        'USER': str(request.authenticated_userid or ''),
+        'USER_AGENT': request.user_agent or '',
     }
     if request.params:
         params['PARAMS'] = str(dict(request.params))
