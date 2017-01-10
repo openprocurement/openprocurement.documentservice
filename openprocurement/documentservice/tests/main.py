@@ -48,6 +48,14 @@ class SimpleTest(BaseWebTest):
             {u'description': u'Not Found', u'location': u'body', u'name': u'hash'}
         ])
 
+        response = self.app.post_json(url, {'data': 'hash'}, status=404)
+        self.assertEqual(response.status, '404 Not Found')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.json['status'], 'error')
+        self.assertEqual(response.json['errors'], [
+            {u'description': u'Not Found', u'location': u'body', u'name': u'hash'}
+        ])
+
         response = self.app.post(url, {'hash': 'hash'}, status=422)
         self.assertEqual(response.status, '422 Unprocessable Entity')
         self.assertEqual(response.content_type, 'application/json')
