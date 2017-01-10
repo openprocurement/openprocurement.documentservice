@@ -29,7 +29,7 @@ def get_data(request):
 @view_config(route_name='register', renderer='json', request_method='POST', permission='upload')
 def register_view(request):
     data = get_data(request)
-    if 'hash' not in data:
+    if not isinstance(data, dict) or 'hash' not in data:
         return error_handler(request, 404, {"location": "body", "name": "hash", "description": "Not Found"})
     md5 = data['hash']
     if not md5.startswith('md5:'):
