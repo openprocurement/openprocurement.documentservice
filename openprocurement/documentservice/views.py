@@ -116,7 +116,7 @@ def get_view(request):
         return error_handler(request, 403, {"location": "url", "name": "Expires", "description": "Request has expired"})
     keyid = request.GET.get('KeyID', request.registry.dockey)
     if keyid not in (request.registry.apikey, request.registry.dockey) and not expires:
-        return error_handler(request, 403, {"location": "url", "name": "KeyID", "description": "Key Id does permit to get private document"})
+        return error_handler(request, 403, {"location": "url", "name": "KeyID", "description": "Key Id does not permit to get private document"})
     if keyid not in request.registry.keyring:
         return error_handler(request, 403, {"location": "url", "name": "KeyID", "description": "Key Id does not exist"})
     mess = "{}\0{}".format(uuid, expires) if expires else uuid
