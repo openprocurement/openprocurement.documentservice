@@ -8,19 +8,11 @@ from pyramid.security import Allow
 from pyramid.httpexceptions import exception_response
 from pytz import timezone
 from webob.multidict import NestedMultiDict
-import tempfile
-import traceback
 
 LOGGER = getLogger(__name__)
 TZ = timezone(os.environ['TZ'] if 'TZ' in os.environ else 'Europe/Kiev')
 USERS = {}
 
-old_mkstemp_inner = tempfile._mkstemp_inner
-def _mkstemp_inner(dir, pre, suf, flags):
-    res = old_mkstemp_inner(dir, pre, suf, flags)
-    LOGGER.debug('mkstemp:{}:{}:{}:{}'.format(*traceback.extract_stack(limit=3)[0]))
-    return res
-tempfile._mkstemp_inner = _mkstemp_inner
 
 def auth_check(username, password, request):
     if username in USERS and USERS[username]['password'] == sha512(password).hexdigest():
