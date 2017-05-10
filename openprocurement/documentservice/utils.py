@@ -18,7 +18,7 @@ USERS = {}
 old_mkstemp_inner = tempfile._mkstemp_inner
 def _mkstemp_inner(dir, pre, suf, flags):
     res = old_mkstemp_inner(dir, pre, suf, flags)
-    LOGGER.info('mkstemp:{}:{}:{}:{}'.format(*traceback.extract_stack(limit=3)[0]))
+    LOGGER.debug('mkstemp:{}:{}:{}:{}'.format(*traceback.extract_stack(limit=3)[0]))
     return res
 tempfile._mkstemp_inner = _mkstemp_inner
 
