@@ -112,3 +112,18 @@ def error_handler(request, status, error):
         "status": "error",
         "errors": [error]
     }
+
+
+def close_open_files(request):
+    """Close open temp files"""
+    if hasattr(request, 'POST'):
+        for field in request.POST.values():
+            if hasattr(field, 'file') and field.file and not field.file.closed:
+                field.file.close()
+    if hasattr(request.body_file_raw, 'closed') and not request.body_file_raw.closed:
+        request.body_file_raw.close()
+
+
+def new_request_subscriber(event):
+    request = event.request
+    request.add_finished_callback(close_open_files)
