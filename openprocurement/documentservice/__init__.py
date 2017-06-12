@@ -7,6 +7,8 @@ from pyramid.authentication import BasicAuthAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.events import ContextFound, NewRequest
+from openprocurement.documentservice.database import DatabaseWrapper
+from celery import Celery
 
 
 def main(global_config, **settings):
@@ -51,5 +53,7 @@ def main(global_config, **settings):
     for entry_point in iter_entry_points('openprocurement.documentservice.plugins', storage):
         plugin = entry_point.load()
         plugin(config)
+    config.registry.db = DatabaseWrapper(settings.get('mongo_url'), storage)
+    config.registry.celery = Celery('document_service', broker=settings.get('broker_url'))
 
     return config.make_wsgi_app()

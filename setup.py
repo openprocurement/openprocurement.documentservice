@@ -17,6 +17,8 @@ requires = [
     'pytz',
     'rfc6266',
     'setuptools',
+    'celery',
+    'pymongo',
 ]
 test_requires = requires + [
     'webtest',
