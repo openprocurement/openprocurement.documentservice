@@ -4,7 +4,7 @@ import datetime
 from pymongo import MongoClient
 from uuid import UUID
 
-FILES_COLLECTION = 'files'
+DOCUMENTS_COLLECTION = 'documents'
 
 
 def uuidstring_to_mongouuid(uuid):
@@ -15,24 +15,22 @@ class DatabaseWrapper:
     def __init__(self, mongo_url, current_storage_name):
         self.database = MongoClient(mongo_url).get_default_database()
         self.current_storage_name = current_storage_name
-        self.files_collection = self.database.get_collection(FILES_COLLECTION)
+        self.documents_collection = self.database.get_collection(DOCUMENTS_COLLECTION)
 
-    def save_file_register(self, uuid, md5):
+    def save_document_register(self, uuid, md5):
         doc = {
-            'hash': md5,
-            'last_modified': datetime.datetime.now(),
-            'uploaded': False,
-            'registered_on': [self.current_storage_name]
+            'register_hash': md5,
+            'registered_on': [self.current_storage_name],
+            'create_time': datetime.datetime.now(),
         }
-        self.files_collection.update_one({'_id': uuidstring_to_mongouuid(uuid)}, {'$set': doc}, upsert=True)
+        self.documents_collection.update_one({'_id': uuidstring_to_mongouuid(uuid)}, {'$set': doc}, upsert=True)
 
-    def save_file_upload(self, uuid, md5, content_type, filename):
+    def save_document_upload(self, uuid, md5, content_type, filename):
         doc = {
-            'hash': md5,
-            'last_modified': datetime.datetime.now(),
-            'uploaded': True,
+            'real_hash': md5,
             'uploaded_on': [self.current_storage_name],
+            'create_time': datetime.datetime.now(),
             'content_type': content_type,
             'filename': filename,
         }
-        self.files_collection.update_one({'_id': uuidstring_to_mongouuid(uuid)}, {'$set': doc}, upsert=True)
+        self.documents_collection.update_one({'_id': uuidstring_to_mongouuid(uuid)}, {'$set': doc}, upsert=True)

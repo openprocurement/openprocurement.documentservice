@@ -9,7 +9,7 @@ from urllib import quote, unquote
 
 LOGGER = getLogger(__name__)
 EXPIRES = 300
-TASK_COPY_FILE = 'task.copy_file'
+TASK_COPY_DOCUMENT = 'task.copy_document'
 
 
 @view_config(route_name='status', renderer='string')
@@ -40,8 +40,8 @@ def register_view(request):
     if set(md5[4:]).difference('0123456789abcdef'):
         return error_handler(request, 422, {"location": "body", "name": "hash", "description": [u'Hash value is not hexadecimal.']})
     uuid = request.registry.storage.register(md5)
-    request.registry.db.save_file_register(uuid, md5)
-    request.registry.celery.send_task(TASK_COPY_FILE, kwargs={'uuid': uuid})
+    request.registry.db.save_document_register(uuid, md5)
+    request.registry.celery.send_task(TASK_COPY_DOCUMENT, kwargs={'uuid': uuid})
     LOGGER.info('Registered new document upload {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'registered_upload'}, {'doc_id': uuid, 'doc_hash': md5}))
     signature = quote(b64encode(request.registry.signer.signature(uuid)))
@@ -59,8 +59,8 @@ def upload_view(request):
         return error_handler(request, 404, {"location": "body", "name": "file", "description": "Not Found"})
     post_file = request.POST['file']
     uuid, md5, content_type, filename = request.registry.storage.upload(post_file)
-    request.registry.db.save_file_upload(uuid, md5, content_type, filename)
-    request.registry.celery.send_task(TASK_COPY_FILE, kwargs={'uuid': uuid})
+    request.registry.db.save_document_upload(uuid, md5, content_type, filename)
+    request.registry.celery.send_task(TASK_COPY_DOCUMENT, kwargs={'uuid': uuid})
     LOGGER.info('Uploaded new document {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'uploaded_new_document'}, {'doc_id': uuid, 'doc_hash': md5}))
     expires = int(time()) + EXPIRES
@@ -96,8 +96,8 @@ def upload_file_view(request):
     post_file = request.POST['file']
     try:
         uuid, md5, content_type, filename = request.registry.storage.upload(post_file, uuid)
-        request.registry.db.save_file_upload(uuid, md5, content_type, filename)
-        request.registry.celery.send_task(TASK_COPY_FILE, kwargs={'uuid': uuid})
+        request.registry.db.save_document_upload(uuid, md5, content_type, filename)
+        request.registry.celery.send_task(TASK_COPY_DOCUMENT, kwargs={'uuid': uuid})
     except KeyNotFound:
         return error_handler(request, 404, {"location": "url", "name": "doc_id", "description": "Not Found"})
     except ContentUploaded:
