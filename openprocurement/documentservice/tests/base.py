@@ -12,8 +12,7 @@ class BaseWebTest(unittest.TestCase):
     It setups the database before each test and delete it after.
     """
     def setUp(self):
-        with mock.patch('openprocurement.documentservice.DatabaseWrapper'), \
-             mock.patch('openprocurement.documentservice.Celery'):
+        with mock.patch('openprocurement.documentservice.DataSyncManager'):
             self.app = webtest.TestApp(
                 "config:tests.ini", relative_to=os.path.dirname(__file__))
             self.app.authorization = ('Basic', ('broker', 'broker'))

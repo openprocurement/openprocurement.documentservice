@@ -7,8 +7,8 @@ from pyramid.authentication import BasicAuthAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.events import ContextFound, NewRequest
-from openprocurement.documentservice.database import DatabaseWrapper
-from celery import Celery
+from pyramid.settings import asbool
+from openprocurement.documentservice.data_sync import DataSyncManager
 
 
 def main(global_config, **settings):
@@ -53,7 +53,10 @@ def main(global_config, **settings):
     for entry_point in iter_entry_points('openprocurement.documentservice.plugins', storage):
         plugin = entry_point.load()
         plugin(config)
-    config.registry.db = DatabaseWrapper(settings.get('mongo_url'), storage)
-    config.registry.celery = Celery('document_service', broker=settings.get('broker_url'))
+
+    config.registry.data_sync_manager = DataSyncManager(
+        sync_enabled=asbool(settings.get('sync_enabled', 'false')), mongo_url=settings.get('mongo_url'),
+        current_storage_name=storage, broker_url=settings.get('broker_url'), timeout=settings.get('mongo_timeout', 5000)
+    )
 
     return config.make_wsgi_app()

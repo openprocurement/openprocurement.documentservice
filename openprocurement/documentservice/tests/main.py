@@ -85,8 +85,7 @@ class SimpleTest(BaseWebTest):
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('http://localhost/upload/', response.json['upload_url'])
-        self.app.app.registry.db.save_document_register.assert_called()
-        self.app.app.registry.celery.send_task.assert_called()
+        self.app.app.registry.data_sync_manager.sync_document_register.assert_called()
 
         response = self.app.post_json('/register', {'data': {'hash': 'md5:' + '0' * 32}})
         self.assertEqual(response.status, '201 Created')
@@ -117,8 +116,7 @@ class SimpleTest(BaseWebTest):
 
     def test_upload_post(self):
         response = self.app.post('/upload', upload_files=[('file', u'file.txt', 'content')])
-        self.app.app.registry.db.save_document_upload.assert_called()
-        self.app.app.registry.celery.send_task.assert_called()
+        self.app.app.registry.data_sync_manager.sync_document_upload.assert_called()
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('http://localhost/get/', response.json['get_url'])
@@ -191,15 +189,14 @@ class SimpleTest(BaseWebTest):
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('http://localhost/upload/', response.json['upload_url'])
         upload_url = response.json['upload_url']
-        self.app.app.registry.db.save_document_register.assert_called_once()
+        self.app.app.registry.data_sync_manager.sync_document_register.assert_called_once()
 
         response = self.app.post(upload_url, upload_files=[('file', u'file.txt', 'content')])
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertIn('http://localhost/get/', response.json['get_url'])
 
-        self.app.app.registry.db.save_document_upload.assert_called_once()
-        self.app.app.registry.celery.send_task.assert_called()
+        self.app.app.registry.data_sync_manager.sync_document_upload.assert_called_once()
 
         response = self.app.post(upload_url, upload_files=[('file', u'file.txt', 'content')], status=403)
         self.assertEqual(response.status, '403 Forbidden')
