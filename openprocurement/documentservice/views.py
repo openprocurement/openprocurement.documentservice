@@ -39,6 +39,7 @@ def register_view(request):
     if set(md5[4:]).difference('0123456789abcdef'):
         return error_handler(request, 422, {"location": "body", "name": "hash", "description": [u'Hash value is not hexadecimal.']})
     uuid = request.registry.storage.register(md5)
+    request.registry.data_sync_manager.sync_document_register(uuid, md5)
     LOGGER.info('Registered new document upload {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'registered_upload'}, {'doc_id': uuid, 'doc_hash': md5}))
     signature = quote(b64encode(request.registry.signer.signature(uuid)))
@@ -56,6 +57,7 @@ def upload_view(request):
         return error_handler(request, 404, {"location": "body", "name": "file", "description": "Not Found"})
     post_file = request.POST['file']
     uuid, md5, content_type, filename = request.registry.storage.upload(post_file)
+    request.registry.data_sync_manager.sync_document_upload(uuid, md5, content_type, filename)
     LOGGER.info('Uploaded new document {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'uploaded_new_document'}, {'doc_id': uuid, 'doc_hash': md5}))
     expires = int(time()) + EXPIRES
@@ -91,6 +93,7 @@ def upload_file_view(request):
     post_file = request.POST['file']
     try:
         uuid, md5, content_type, filename = request.registry.storage.upload(post_file, uuid)
+        request.registry.data_sync_manager.sync_document_upload(uuid, md5, content_type, filename)
     except KeyNotFound:
         return error_handler(request, 404, {"location": "url", "name": "doc_id", "description": "Not Found"})
     except ContentUploaded:
