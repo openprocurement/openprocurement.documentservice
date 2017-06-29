@@ -1,4 +1,4 @@
-import bson
+
 import datetime
 
 from uuid import UUID
@@ -11,6 +11,7 @@ from pymongo.errors import PyMongoError
 
 DOCUMENTS_COLLECTION = 'documents'
 TASK_COPY_DOCUMENT = 'task.copy_document'
+QUEUE_COPY_DOCUMENT = 'copy_document'
 LOGGER = getLogger(__name__)
 
 
@@ -26,48 +27,54 @@ class DataSyncManager:
                 self.database = client.get_default_database()
                 self.documents_collection = self.database.get_collection(DOCUMENTS_COLLECTION)
             except PyMongoError as err:
-                LOGGER.warn(err, exc_info=True)
+                LOGGER.warning(err, exc_info=True)
             else:
                 try:
                     self.celery = Celery('document_service', broker=broker_url)
+                    self.celery.conf.task_routes = {
+                        TASK_COPY_DOCUMENT: {
+                            'queue': QUEUE_COPY_DOCUMENT,
+                        }
+                    }
                 except (CeleryError, KombuError) as err:
-                    LOGGER.warn(err, exc_info=True)
+                    LOGGER.warning(err, exc_info=True)
         else:
-            LOGGER.warn('Sync is disabled')
+            LOGGER.warning('Sync is disabled')
 
     def sync_document_register(self, uuid, md5):
         if not self.sync_enabled:
             return
-        self.__update_mongo_doc(uuid, {
+        key = '/'.join([format(i, 'x') for i in UUID(uuid).fields])
+        self.__update_mongo_doc(key, {
             'register_hash': md5,
             'registered_on': [self.current_storage_name],
             'create_time': datetime.datetime.now(),
         })
-        self.__send_copy_task(uuid)
+        self.__send_copy_task(key)
 
     def sync_document_upload(self, uuid, md5, content_type, filename):
         if not self.sync_enabled:
             return
-        self.__update_mongo_doc(uuid, {
+        key = '/'.join([format(i, 'x') for i in UUID(uuid).fields])
+        self.__update_mongo_doc(key, {
             'real_hash': md5,
             'uploaded_on': [self.current_storage_name],
             'create_time': datetime.datetime.now(),
             'content_type': content_type,
             'filename': filename,
         })
-        self.__send_copy_task(uuid)
+        self.__send_copy_task(key)
 
-    def __update_mongo_doc(self, uuid, doc):
+    def __update_mongo_doc(self, key, doc):
         try:
-            mongo_id = bson.Binary(UUID(uuid).bytes, bson.binary.UUID_SUBTYPE)
-            self.documents_collection.update_one({'_id': mongo_id}, {'$set': doc}, upsert=True)
+            self.documents_collection.update_one({'key': key}, {'$set': doc}, upsert=True)
         except PyMongoError as err:
-            LOGGER.warn(err, exc_info=True)
+            LOGGER.warning(err, exc_info=True)
 
-    def __send_copy_task(self, uuid):
+    def __send_copy_task(self, key):
         if not self.celery:
             return
         try:
-            self.celery.send_task(TASK_COPY_DOCUMENT, kwargs={'uuid': uuid})
+            self.celery.send_task(TASK_COPY_DOCUMENT, kwargs={'key': key})
         except (CeleryError, KombuError) as err:
-            LOGGER.warn(err, exc_info=True)
+            LOGGER.warning(err, exc_info=True)
