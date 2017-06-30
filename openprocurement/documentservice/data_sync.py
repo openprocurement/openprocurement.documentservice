@@ -31,11 +31,7 @@ class DataSyncManager:
             else:
                 try:
                     self.celery = Celery('document_service', broker=broker_url)
-                    self.celery.conf.task_routes = {
-                        TASK_COPY_DOCUMENT: {
-                            'queue': QUEUE_COPY_DOCUMENT,
-                        }
-                    }
+                    self.celery.conf.task_default_queue = QUEUE_COPY_DOCUMENT
                 except (CeleryError, KombuError) as err:
                     LOGGER.warning(err, exc_info=True)
         else:
