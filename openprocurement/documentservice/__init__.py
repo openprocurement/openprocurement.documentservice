@@ -54,9 +54,11 @@ def main(global_config, **settings):
         plugin = entry_point.load()
         plugin(config)
 
+    broker_timeout = float(settings.get('broker_timeout', 1000)) / 1000
     config.registry.data_sync_manager = DataSyncManager(
-        sync_enabled=asbool(settings.get('sync_enabled', 'false')), mongo_url=settings.get('mongo_url'),
-        current_storage_name=storage, broker_url=settings.get('broker_url'), timeout=settings.get('mongo_timeout', 5000)
+        sync_enabled=asbool(settings.get('sync_enabled', 'false')), current_storage_name=storage,
+        mongo_url=settings.get('mongo_url'), mongo_timeout=settings.get('mongo_timeout', 5000),
+        broker_url=settings.get('broker_url'), broker_timeout=broker_timeout
     )
 
     return config.make_wsgi_app()
