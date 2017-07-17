@@ -50,6 +50,6 @@ def main(global_config, **settings):
     storage = settings.get('storage')
     for entry_point in iter_entry_points('openprocurement.documentservice.plugins', storage):
         plugin = entry_point.load()
-        plugin(config)
+        config.registry.storage = plugin(config)
 
     return config.make_wsgi_app()
