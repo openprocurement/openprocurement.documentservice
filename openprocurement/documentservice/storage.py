@@ -87,4 +87,4 @@ class MemoryStorage:
 
 
 def includeme(config):
-    config.registry.storage = MemoryStorage()
+    return MemoryStorage()
