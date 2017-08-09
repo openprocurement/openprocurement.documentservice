@@ -148,6 +148,7 @@ def get_view(request):
         return e.url
     else:
         request.response.content_type = doc['Content-Type']
+        request.response.content_type_params = {}
         request.response.content_disposition = doc['Content-Disposition']
         request.response.body = doc['Content']
         return request.response
