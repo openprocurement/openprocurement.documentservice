@@ -1,7 +1,7 @@
 from base64 import b64encode, b64decode
 from logging import getLogger
 from openprocurement.documentservice.storage import StorageRedirect, HashInvalid, KeyNotFound, NoContent, ContentUploaded, StorageUploadError
-from openprocurement.documentservice.utils import error_handler, storage_error_handler, context_unpack
+from openprocurement.documentservice.utils import error_handler, context_unpack
 from pyramid.httpexceptions import HTTPNoContent
 from pyramid.view import view_config
 from time import time
@@ -41,7 +41,8 @@ def register_view(request):
     try:
         uuid = request.registry.storage.register(md5)
     except StorageUploadError as exc:
-        return storage_error_handler(request, 502, exc.message)
+        LOGGER.error('Storage error: %s', exc.message, extra=context_unpack(request, {'MESSAGE_ID': 'storage_error'}))
+        return error_handler(request, 502, {"description": "Upload failed, please try again later"})
     LOGGER.info('Registered new document upload {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'registered_upload'}, {'doc_id': uuid, 'doc_hash': md5}))
     signature = quote(b64encode(request.registry.signer.signature(uuid)))
@@ -61,7 +62,8 @@ def upload_view(request):
     try:
         uuid, md5, content_type, filename = request.registry.storage.upload(post_file)
     except StorageUploadError as exc:
-        return storage_error_handler(request, 502, exc.message)
+        LOGGER.error('Storage error: %s', exc.message, extra=context_unpack(request, {'MESSAGE_ID': 'storage_error'}))
+        return error_handler(request, 502, {"description": "Upload failed, please try again later"})
     LOGGER.info('Uploaded new document {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'uploaded_new_document'}, {'doc_id': uuid, 'doc_hash': md5}))
     expires = int(time()) + EXPIRES
@@ -104,7 +106,8 @@ def upload_file_view(request):
     except HashInvalid:
         return error_handler(request, 403, {"location": "body", "name": "file", "description": "Invalid checksum"})
     except StorageUploadError as exc:
-        return storage_error_handler(request, 502, exc.message)
+        LOGGER.error('Storage error: %s', exc.message, extra=context_unpack(request, {'MESSAGE_ID': 'storage_error'}))
+        return error_handler(request, 502, {"description": "Upload failed, please try again later"})
     LOGGER.info('Uploaded document {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'uploaded_document'}, {'doc_hash': md5}))
     expires = int(time()) + EXPIRES

@@ -114,16 +114,6 @@ def error_handler(request, status, error):
     }
 
 
-def storage_error_handler(request, status, error):
-    params = {'ERROR_STATUS': status}
-    LOGGER.error('Storage error "{}"'.format(error), extra=context_unpack(request, {'MESSAGE_ID': 'storage_error_handler'}, params))
-    request.response.status = status
-    return {
-        "status": "error",
-        "errors": [{"description": "Upload failed, please try again later"}]
-    }
-
-
 def close_open_files(request):
     """Close open temp files"""
     if hasattr(request, 'POST'):

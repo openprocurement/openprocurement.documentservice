@@ -36,11 +36,7 @@ class ContentUploaded(ValueError):
 
 
 class StorageUploadError(Exception):
-    def __init__(self, msg, original_exception=None):
-        if original_exception:
-            msg = "{}: {}".format(msg, original_exception)
-        super(StorageUploadError, self).__init__(msg)
-        self.original_exception = original_exception
+    pass
 
 
 class StorageRedirect(Exception):
