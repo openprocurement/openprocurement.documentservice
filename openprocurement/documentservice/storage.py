@@ -35,6 +35,10 @@ class ContentUploaded(ValueError):
     pass
 
 
+class StorageUploadError(Exception):
+    pass
+
+
 class StorageRedirect(Exception):
     def __init__(self, url):
         self.url = url

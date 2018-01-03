@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import mock
 import unittest
 from hashlib import md5
 from six import BytesIO
 from urllib import quote
 from openprocurement.documentservice.tests.base import BaseWebTest
+from openprocurement.documentservice.storage import StorageUploadError
 
 
 class SimpleTest(BaseWebTest):
@@ -293,6 +295,35 @@ class SimpleTest(BaseWebTest):
         self.assertEqual(response.content_type, 'text/plain')
         self.assertEqual(response.body, 'content')
 
+    def test_storage_error(self):
+        storage = self.app.app.registry.storage
+        with mock.patch.object(storage, 'register', mock.Mock(side_effect=StorageUploadError('Some storage error'))):
+            response = self.app.post('/register', {'hash': 'md5:' + '0' * 32, 'filename': 'file.txt'}, status=502)
+            self.assertEqual(response.status, '502 Bad Gateway')
+            self.assertEqual(response.json['errors'], [
+                {u'description': u'Upload failed, please try again later'}
+            ])
+
+        with mock.patch.object(storage, 'upload', mock.Mock(side_effect=StorageUploadError('Some storage error'))):
+            content = 'content'
+            md5hash = 'md5:' + md5(content).hexdigest()
+            response = self.app.post('/register', {'hash': md5hash, 'filename': 'file.txt'})
+            self.assertEqual(response.status, '201 Created')
+            self.assertEqual(response.content_type, 'application/json')
+            self.assertIn('http://localhost/upload/', response.json['upload_url'])
+            upload_url = response.json['upload_url']
+
+            response = self.app.post(upload_url, upload_files=[('file', u'file.txt', 'content')], status=502)
+            self.assertEqual(response.status, '502 Bad Gateway')
+            self.assertEqual(response.json['errors'], [
+                {u'description': u'Upload failed, please try again later'}
+            ])
+
+            response = self.app.post('/upload', upload_files=[('file', u'file.txt', 'content')], status=502)
+            self.assertEqual(response.status, '502 Bad Gateway')
+            self.assertEqual(response.json['errors'], [
+                {u'description': u'Upload failed, please try again later'}
+            ])
 
 def suite():
     suite = unittest.TestSuite()
