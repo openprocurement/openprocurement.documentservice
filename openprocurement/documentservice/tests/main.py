@@ -224,7 +224,7 @@ class SimpleTest(BaseWebTest):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['status'], 'error')
         self.assertEqual(response.json['errors'], [
-            {u'description': u'Key Id does permit to get private document', u'name': u'KeyID', u'location': u'url'}
+            {u'description': u'Key Id does not permit to get private document', u'name': u'KeyID', u'location': u'url'}
         ])
 
         response = self.app.get('/get/uuid?Expires=1', status=403)
