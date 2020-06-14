@@ -160,5 +160,8 @@ def get_view(request):
     else:
         request.response.content_type = doc['Content-Type']
         request.response.content_disposition = doc['Content-Disposition']
-        request.response.body = doc['Content']
+        if 'X-Accel-Redirect' in doc:
+            request.response.headers['X-Accel-Redirect'] = doc['X-Accel-Redirect']
+        else:
+            request.response.body = doc['Content']
         return request.response
