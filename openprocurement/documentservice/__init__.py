@@ -46,6 +46,8 @@ def main(global_config, **settings):
     config.registry.upload_host = settings.get('upload_host')
     config.registry.get_host = settings.get('get_host')
 
+    config.registry.url_scheme = settings.get('url_scheme', 'http')
+
     # search for storage
     storage = settings.get('storage')
     for entry_point in iter_entry_points('openprocurement.documentservice.plugins', storage):

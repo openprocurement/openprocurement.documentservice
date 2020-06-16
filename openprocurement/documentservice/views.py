@@ -46,9 +46,19 @@ def register_view(request):
     LOGGER.info('Registered new document upload {}'.format(uuid),
                 extra=context_unpack(request, {'MESSAGE_ID': 'registered_upload'}, {'doc_id': uuid, 'doc_hash': md5}))
     signature = quote(b64encode(request.registry.signer.signature(uuid)))
-    upload_url = request.route_url('upload_file', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.upload_host or request.domain, _port=request.host_port)
+    upload_url = request.route_url('upload_file',
+                                   doc_id=uuid,
+                                   _query={'Signature': signature, 'KeyID': request.registry.dockey},
+                                   _scheme=request.registry.url_scheme,
+                                   _host=request.registry.upload_host or request.domain,
+                                   _port=request.host_port)
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5[4:]))))
-    data['url'] = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain, _port=request.host_port)
+    data['url'] = request.route_url('get',
+                                    doc_id=uuid,
+                                    _query={'Signature': signature, 'KeyID': request.registry.dockey},
+                                    _scheme=request.registry.url_scheme,
+                                    _host=request.registry.get_host or request.domain,
+                                    _port=request.host_port)
     request.response.status = 201
     request.response.headers['Location'] = upload_url
     return {'data': data, 'upload_url': upload_url}
@@ -68,9 +78,19 @@ def upload_view(request):
                 extra=context_unpack(request, {'MESSAGE_ID': 'uploaded_new_document'}, {'doc_id': uuid, 'doc_hash': md5}))
     expires = int(time()) + EXPIRES
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5[4:]))))
-    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain, _port=request.host_port)
+    url = request.route_url('get',
+                            doc_id=uuid,
+                            _query={'Signature': signature, 'KeyID': request.registry.dockey},
+                            _scheme=request.registry.url_scheme,
+                            _host=request.registry.get_host or request.domain,
+                            _port=request.host_port)
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, expires))))
-    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain, _port=request.host_port)
+    get_url = request.route_url('get',
+                                doc_id=uuid,
+                                _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey},
+                                _scheme= request.registry.url_scheme,
+                                _host=request.registry.get_host or request.domain,
+                                _port=request.host_port)
     request.response.headers['Location'] = get_url
     return {'data': {'url': url, 'hash': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
@@ -112,9 +132,19 @@ def upload_file_view(request):
                 extra=context_unpack(request, {'MESSAGE_ID': 'uploaded_document'}, {'doc_hash': md5}))
     expires = int(time()) + EXPIRES
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, md5[4:]))))
-    url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain, _port=request.host_port)
+    url = request.route_url('get',
+                            doc_id=uuid,
+                            _query={'Signature': signature, 'KeyID': request.registry.dockey},
+                            _scheme=request.registry.url_scheme,
+                            _host=request.registry.get_host or request.domain,
+                            _port=request.host_port)
     signature = quote(b64encode(request.registry.signer.signature("{}\0{}".format(uuid, expires))))
-    get_url = request.route_url('get', doc_id=uuid, _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey}, _host=request.registry.get_host or request.domain, _port=request.host_port)
+    get_url = request.route_url('get',
+                                doc_id=uuid,
+                                _query={'Signature': signature, 'Expires': expires, 'KeyID': request.registry.dockey},
+                                _scheme=request.registry.url_scheme,
+                                _host=request.registry.get_host or request.domain,
+                                _port=request.host_port)
     return {'data': {'url': url, 'hash': md5, 'format': content_type, 'title': filename}, 'get_url': get_url}
 
 
