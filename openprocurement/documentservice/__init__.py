@@ -1,5 +1,9 @@
 import gevent.monkey
 gevent.monkey.patch_all()
+import logging
+import sentry_sdk
+from sentry_sdk.integrations.logging import LoggingIntegration
+from sentry_sdk.integrations.pyramid import PyramidIntegration
 from libnacl.sign import Signer, Verifier
 from openprocurement.documentservice.utils import auth_check, Root, add_logging_context, read_users, request_params, new_request_subscriber
 from pkg_resources import iter_entry_points
@@ -7,6 +11,14 @@ from pyramid.authentication import BasicAuthAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.events import ContextFound, NewRequest
+
+sentry_logging = LoggingIntegration(
+    level=logging.INFO,        # Capture info and above as breadcrumbs
+    event_level=logging.ERROR  # Send errors as events
+)
+sentry_sdk.init(
+    integrations=[sentry_logging, PyramidIntegration()]
+)
 
 
 def main(global_config, **settings):

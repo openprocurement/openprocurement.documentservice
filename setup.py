@@ -17,6 +17,7 @@ requires = [
     'pytz',
     'rfc6266',
     'setuptools',
+    'sentry-sdk',
 ]
 test_requires = requires + [
     'webtest',
