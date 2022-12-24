@@ -23,7 +23,7 @@ python-coveralls==2.5.0
 pytz==2014.10
 repoze.lru==0.6
 requests==2.7.0
-setuptools==21.2.2
+setuptools==65.5.1
 sh==1.11
 six==1.9.0
 snowballstemmer==1.2.0
